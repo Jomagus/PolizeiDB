@@ -28,7 +28,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialisiere benoetigte Subsysteme
+        DatenbankHandler DBH = new DatenbankHandler();
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
+
+        DBH.RebuildDatabase(); // TODO DAS HIER LOESCHEN!!!
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
