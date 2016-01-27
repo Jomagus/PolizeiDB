@@ -19,6 +19,8 @@ public class Main extends Application {
     Stage PrimaereStage;
     Scene PrimaereScene;
     BorderPane PrimaeresLayout;
+    DatenbankHandler DBH;
+    FussleistenInfo FLI;
 
 
     public static void main(String[] args) {
@@ -28,10 +30,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialisiere benoetigte Subsysteme
-        DatenbankHandler DBH = new DatenbankHandler();
+        FLI = new FussleistenInfo();
+        DBH = new DatenbankHandler(FLI);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
 
-        DBH.RebuildDatabase(); // TODO DAS HIER LOESCHEN!!!
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
@@ -90,8 +92,26 @@ public class Main extends Application {
         SuchMenue.getItems().add(ItemOpfer);
         SuchMenue.getItems().add(ItemVerdachtige);
 
+        // Das Hilfe Menue
+        Menu HilfeMenue = new Menu("_Hilfe");
+        MenuItem ItemDBRebuild = new MenuItem("Datenbank neu erstellen");
+
+        ItemDBRebuild.setOnAction(event -> {
+            boolean DBRebuildBestaetigung = BestaetigungsBox.ErstellePopUp("Bestätigung", "Sind sie sicher? Alle vorhandenen Daten\nwerden dabei gelöscht werden!");
+            if (DBRebuildBestaetigung) {
+                FLI.setInfoText("Erstelle Datenbank neu...");
+                DBH.RebuildDatabase();
+            } else {
+                FLI.setInfoText("Datenbankneuerstellung abgebrochen");
+            }
+        });
+
+        HilfeMenue.getItems().add(ItemDBRebuild);
+
+        // Wir fuegen alle in die Hauptleiste ein
+
         MenuBar HauptLeiste = new MenuBar();
-        HauptLeiste.getMenus().addAll(AllgMenue, SuchMenue);
+        HauptLeiste.getMenus().addAll(AllgMenue, SuchMenue, HilfeMenue);
 
         return HauptLeiste;
     }
@@ -115,6 +135,8 @@ public class Main extends Application {
         Button Polizisten = new Button("Polizisten");
         Button Notizen = new Button("Notizen");
         Button Indizien = new Button("Indizien");
+
+        //TODO Relationen!!!!
 
         // Formatiere alle Buttons gleich breit
         Faelle.setMaxWidth(Double.MAX_VALUE);
@@ -141,14 +163,19 @@ public class Main extends Application {
         AnchorPane FussLeiste = new AnchorPane();
         FussLeiste.setStyle("-fx-background-color: #505050;");
 
+        Label InfoLabel = new Label();
+        InfoLabel.setTextFill(Color.WHITE);
+
+        FLI.setLabel(InfoLabel);
+
+
         Label TestLabel = new Label("NOCH ÄNDERN!");
         TestLabel.setTextFill(Color.WHITE);
 
-        FussLeiste.getChildren().add(TestLabel);
+
+        FussLeiste.getChildren().addAll(InfoLabel, TestLabel);
+        AnchorPane.setLeftAnchor(InfoLabel, (double) 10);
         AnchorPane.setRightAnchor(TestLabel, (double) 10);
-
-
-
         return FussLeiste;
     }
 

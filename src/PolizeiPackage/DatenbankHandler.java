@@ -1,9 +1,7 @@
 package PolizeiPackage;
 
-import java.nio.file.FileSystemNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -15,15 +13,25 @@ public class DatenbankHandler {
 
     private Connection Verbindung;
     private Statement AnfrageObjekt;
+    private FussleistenInfo FLI;
 
-    public DatenbankHandler() {
+    public DatenbankHandler(FussleistenInfo FLInfo) {
+        this.FLI = FLInfo;
         // Wir versuchen eine Verbindung zur Datenbank herzustellen.
         Verbindung = null;
+        VerbindeDatenbank();
+    }
+
+    /**
+     * Stellt eine Verbindung mit der Datenbank her.
+     */
+    private void VerbindeDatenbank() {
         try {
             Verbindung = DriverManager.getConnection("jdbc:sqlite:Polizei.db");
             AnfrageObjekt = Verbindung.createStatement();
             AnfrageObjekt.setQueryTimeout(SQL_TIMEOUT_TIME);
         } catch (SQLException e) {
+            FLI.setErrorText(e.getMessage());
             System.err.println(e.getMessage()); //TODO ordentliches Errorhandling
         }
     }
@@ -32,6 +40,7 @@ public class DatenbankHandler {
      * Löscht (!!!) die Datenbank und erstellt eine neue.
      */
     public void RebuildDatabase() {
+        //TODO hier vielleicht disconnecten, bestehnende Datenbankdatei löschen und dann neu Verbinden
         try {
             AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS PERSON CASCADE;\n");
 
@@ -139,7 +148,10 @@ public class DatenbankHandler {
                     "  FOREIGN KEY (PersonenID) REFERENCES POLIZIST(PersonenID) ON UPDATE CASCADE ON DELETE RESTRICT,\n" +
                     "  FOREIGN KEY (FallID) REFERENCES FALL(FallID)  ON UPDATE CASCADE ON DELETE RESTRICT\n" +
                     ");");
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+            FLI.setErrorText(e.getMessage()); //TODO ordentliches Error Handling
+        }
+        FLI.setInfoText("Datenbank wurde neu erstellt");
     }
 
     /**
