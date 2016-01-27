@@ -6,13 +6,13 @@ import javafx.scene.paint.Color;
 /**
  * Gibt dem Nutzer aktuelle Informationen ueber die Fussleiste aus.
  */
-public class FussleistenInfo {
+public class InfoErrorManager {
     private Label InfoLabel;
 
     /**
-     * Konstruktor. ACHTUNG: setLabel Funktion muss einmal gelaufen sein, bevor diese Klasse arbeiten kann.
+     * Konstruktor. ACHTUNG: setLabel Funktion muss einmal gelaufen sein, bevor einige Methoden funktionieren.
      */
-    public FussleistenInfo() {
+    public InfoErrorManager() {
         InfoLabel = null;
     }
 
@@ -21,7 +21,7 @@ public class FussleistenInfo {
     }
 
     /**
-     * Setzt einen Info Label Text.
+     * Setzt einen Info Label Text in der Fussleiste.
      *
      * @param InfoText Der angezeigte Text
      */
@@ -33,7 +33,7 @@ public class FussleistenInfo {
     }
 
     /**
-     * Setzt einen Error Label Text.
+     * Setzt einen Error Label Text in der Fussleiste.
      *
      * @param InfoText Der angezeigte Text
      */

@@ -13,13 +13,17 @@ public class DatenbankHandler {
 
     private Connection Verbindung;
     private Statement AnfrageObjekt;
-    private FussleistenInfo FLI;
+    private InfoErrorManager IEM;
 
-    public DatenbankHandler(FussleistenInfo FLInfo) {
-        this.FLI = FLInfo;
+    public DatenbankHandler(InfoErrorManager FLInfo) {
+        this.IEM = FLInfo;
         // Wir versuchen eine Verbindung zur Datenbank herzustellen.
         Verbindung = null;
         VerbindeDatenbank();
+        if (Verbindung == null) {
+            //TODO Errorbehandlung
+            IEM.setErrorText("Konnte keine Verbindung zur Datenbank herstellen");
+        }
     }
 
     /**
@@ -31,7 +35,7 @@ public class DatenbankHandler {
             AnfrageObjekt = Verbindung.createStatement();
             AnfrageObjekt.setQueryTimeout(SQL_TIMEOUT_TIME);
         } catch (SQLException e) {
-            FLI.setErrorText(e.getMessage());
+            IEM.setErrorText(e.getMessage());
             System.err.println(e.getMessage()); //TODO ordentliches Errorhandling
         }
     }
@@ -149,10 +153,21 @@ public class DatenbankHandler {
                     "  FOREIGN KEY (FallID) REFERENCES FALL(FallID)  ON UPDATE CASCADE ON DELETE RESTRICT\n" +
                     ");");
         } catch (SQLException e) {
-            FLI.setErrorText(e.getMessage()); //TODO ordentliches Error Handling
+            IEM.setErrorText(e.getMessage()); //TODO ordentliches Error Handling
         }
-        FLI.setInfoText("Datenbank wurde neu erstellt");
+        IEM.setInfoText("Datenbank wurde neu erstellt");
     }
+
+    public Statement getAnfrageObjekt() {
+        return AnfrageObjekt;
+    }
+
+
+
+
+
+
+
 
     /**
      * Zwingt die Datenbankanbindung beendet zu werden.

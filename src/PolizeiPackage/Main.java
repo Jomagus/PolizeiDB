@@ -1,5 +1,6 @@
 package PolizeiPackage;
 
+import PolizeiPackage.Ansichten.ArtAnsicht;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +21,9 @@ public class Main extends Application {
     Scene PrimaereScene;
     BorderPane PrimaeresLayout;
     DatenbankHandler DBH;
-    FussleistenInfo FLI;
+    InfoErrorManager IEM;
+
+    ArtAnsicht AAnsicht;
 
 
     public static void main(String[] args) {
@@ -30,9 +33,12 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialisiere benoetigte Subsysteme
-        FLI = new FussleistenInfo();
-        DBH = new DatenbankHandler(FLI);
+        IEM = new InfoErrorManager();
+        DBH = new DatenbankHandler(IEM);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
+
+        // Initialisiere die Ansichten
+        AAnsicht = new ArtAnsicht(DBH);
 
 
         // Setze die Primaere Stage
@@ -48,6 +54,7 @@ public class Main extends Application {
         PrimaeresLayout.setTop(getHauptMenueLeiste(HauptMenueManager));
         PrimaeresLayout.setLeft(getLinkeAnsichtenLeiste());
         PrimaeresLayout.setBottom(getFussLeiste());
+
 
 
 
@@ -99,10 +106,10 @@ public class Main extends Application {
         ItemDBRebuild.setOnAction(event -> {
             boolean DBRebuildBestaetigung = BestaetigungsBox.ErstellePopUp("Bestätigung", "Sind sie sicher? Alle vorhandenen Daten\nwerden dabei gelöscht werden!");
             if (DBRebuildBestaetigung) {
-                FLI.setInfoText("Erstelle Datenbank neu...");
+                IEM.setInfoText("Erstelle Datenbank neu...");
                 DBH.RebuildDatabase();
             } else {
-                FLI.setInfoText("Datenbankneuerstellung abgebrochen");
+                IEM.setInfoText("Datenbankneuerstellung wurde abgebrochen");
             }
         });
 
@@ -135,8 +142,8 @@ public class Main extends Application {
         Button Polizisten = new Button("Polizisten");
         Button Notizen = new Button("Notizen");
         Button Indizien = new Button("Indizien");
-
-        //TODO Relationen!!!!
+        Button Arbeiten = new Button("Arbeiten");
+        Button ArbeitenAn = new Button("Arbeiten an");
 
         // Formatiere alle Buttons gleich breit
         Faelle.setMaxWidth(Double.MAX_VALUE);
@@ -148,8 +155,25 @@ public class Main extends Application {
         Polizisten.setMaxWidth(Double.MAX_VALUE);
         Notizen.setMaxWidth(Double.MAX_VALUE);
         Indizien.setMaxWidth(Double.MAX_VALUE);
+        Arbeiten.setMaxWidth(Double.MAX_VALUE);
+        ArbeitenAn.setMaxWidth(Double.MAX_VALUE);
 
-        Inneres.getChildren().addAll(Beschriftung, Faelle, Verbrechen, Arten, Bezirke, Behoerden, Personen, Polizisten, Notizen, Indizien);
+        // Definiere Klickverhalten
+
+        Faelle.setOnAction(event -> {});
+        Verbrechen.setOnAction(event -> {});
+        Arten.setOnAction(event -> PrimaeresLayout.setCenter(AAnsicht.getArtAnsicht()));
+        Bezirke.setOnAction(event -> {});
+        Behoerden.setOnAction(event -> {});
+        Personen.setOnAction(event -> {});
+        Polizisten.setOnAction(event -> {});
+        Notizen.setOnAction(event -> {});
+        Indizien.setOnAction(event -> {});
+        Arbeiten.setOnAction(event -> {});
+        ArbeitenAn.setOnAction(event -> {});
+
+
+        Inneres.getChildren().addAll(Beschriftung, Faelle, Verbrechen, Arten, Bezirke, Behoerden, Personen, Polizisten, Notizen, Indizien, Arbeiten, ArbeitenAn);
 
         // Bette alles in ein ScrollPane ein
         ScrollPane LinkeLeiste = new ScrollPane();
@@ -166,7 +190,7 @@ public class Main extends Application {
         Label InfoLabel = new Label();
         InfoLabel.setTextFill(Color.WHITE);
 
-        FLI.setLabel(InfoLabel);
+        IEM.setLabel(InfoLabel);
 
 
         Label TestLabel = new Label("NOCH ÄNDERN!");
