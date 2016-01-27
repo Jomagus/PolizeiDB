@@ -1,3 +1,5 @@
+package PolizeiPackage;
+
 import javafx.stage.Stage;
 
 /**
@@ -18,5 +20,19 @@ public class HauptMenueEventManagment {
     public void FilterSubMenue() {
 
     }
+
+    public void SuchenPolizisten() {
+
+    }
+
+    public void SuchenOpfer() {
+
+    }
+
+    public void SuchenVerdaechtige() {
+
+    }
+
+
 
 }
