@@ -1,15 +1,13 @@
 package PolizeiPackage;
 
-import PolizeiPackage.Ansichten.ArtAnsicht;
+import PolizeiPackage.Ansichten.AnsichtenManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -22,9 +20,7 @@ public class Main extends Application {
     BorderPane PrimaeresLayout;
     DatenbankHandler DBH;
     InfoErrorManager IEM;
-
-    ArtAnsicht AAnsicht;
-
+    AnsichtenManager Ansichten;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -36,10 +32,7 @@ public class Main extends Application {
         IEM = new InfoErrorManager();
         DBH = new DatenbankHandler(IEM);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
-
-        // Initialisiere die Ansichten
-        AAnsicht = new ArtAnsicht(DBH);
-
+        Ansichten = new AnsichtenManager(DBH, IEM);
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
@@ -53,7 +46,7 @@ public class Main extends Application {
         PrimaeresLayout = new BorderPane();
         PrimaeresLayout.setTop(getHauptMenueLeiste(HauptMenueManager));
         PrimaeresLayout.setLeft(getLinkeAnsichtenLeiste());
-        PrimaeresLayout.setBottom(getFussLeiste());
+        PrimaeresLayout.setBottom(IEM.getFussleiste());
 
 
 
@@ -162,7 +155,7 @@ public class Main extends Application {
 
         Faelle.setOnAction(event -> {});
         Verbrechen.setOnAction(event -> {});
-        Arten.setOnAction(event -> PrimaeresLayout.setCenter(AAnsicht.getArtAnsicht()));
+        Arten.setOnAction(event -> PrimaeresLayout.setCenter(Ansichten.getArtAnsicht()));
         Bezirke.setOnAction(event -> {});
         Behoerden.setOnAction(event -> {});
         Personen.setOnAction(event -> {});
@@ -181,26 +174,6 @@ public class Main extends Application {
         LinkeLeiste.setContent(Inneres);
 
         return LinkeLeiste;
-    }
-
-    private AnchorPane getFussLeiste() {
-        AnchorPane FussLeiste = new AnchorPane();
-        FussLeiste.setStyle("-fx-background-color: #505050;");
-
-        Label InfoLabel = new Label();
-        InfoLabel.setTextFill(Color.WHITE);
-
-        IEM.setLabel(InfoLabel);
-
-
-        Label TestLabel = new Label("NOCH ÄNDERN!");
-        TestLabel.setTextFill(Color.WHITE);
-
-
-        FussLeiste.getChildren().addAll(InfoLabel, TestLabel);
-        AnchorPane.setLeftAnchor(InfoLabel, (double) 10);
-        AnchorPane.setRightAnchor(TestLabel, (double) 10);
-        return FussLeiste;
     }
 
     /**
