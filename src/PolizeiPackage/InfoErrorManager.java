@@ -14,7 +14,7 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
 
     public InfoErrorManager() {
         FussLeiste = new AnchorPane();
-        FussLeiste.setStyle("-fx-background-color: #505050;");
+        FussLeiste.setStyle("-fx-background-color: #6e6e6e;");
 
         InfoLabel = new Label();
         InfoLabel.setTextFill(Color.WHITE);

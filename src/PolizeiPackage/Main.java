@@ -123,7 +123,7 @@ public class Main extends Application {
         Inneres.setSpacing(8);
         Inneres.alignmentProperty().set(Pos.BASELINE_CENTER);
 
-        Label Beschriftung = new Label("ArtAM");
+        Label Beschriftung = new Label("Ansichten");
 
         // Lege Buttons an
         Button Faelle = new Button("Fälle");
