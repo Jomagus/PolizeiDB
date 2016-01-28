@@ -2,6 +2,7 @@ package PolizeiPackage.Ansichten;
 
 import PolizeiPackage.DatenbankHandler;
 import PolizeiPackage.InfoErrorManager;
+import PolizeiPackage.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -10,10 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,14 +26,16 @@ public class ArtAnsichtManager {
 
     private DatenbankHandler DH;
     private InfoErrorManager IM;
+    private Main Hauptprogramm;
     private TableView<ArtDaten> Tabelle;
     private BorderPane DatenAnsicht;
     private ObservableList<ArtDaten> ArtDatenListe;
     private boolean ArtAnsichtGeneriert;
 
-    public ArtAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM) {
+    public ArtAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
+        Hauptprogramm = HauptFenster;
         ArtDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         ArtAnsichtGeneriert = false;
@@ -90,7 +90,80 @@ public class ArtAnsichtManager {
         Tabelle.getColumns().add(SpalteName);
         Tabelle.getColumns().add(SpalteBeschreibung);
         Tabelle.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Doppelklicke auf Spalten sollen Detailansichten oeffnen:
+        Tabelle.setRowFactory(param -> {
+            TableRow<ArtDaten> Spalte = new TableRow<>();
+            Spalte.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                    erzeugeDetailAnsicht(Spalte.getItem());
+                }
+            });
+            return Spalte;
+        });
+
         return Tabelle;
+    }
+
+    private void erzeugeDetailAnsicht(ArtDaten SpaltenDaten) {
+        Label LabelArtId = new Label("ArtID");
+        Label LabelArtIdWert = new Label(Integer.toString(SpaltenDaten.getArtID()));
+
+        Label LabelName = new Label("Name");
+        Label TextFeldName = new Label(SpaltenDaten.getName());
+
+        Label LabelBeschreibung = new Label("Beschreibung");
+        Label TextFeldBeschreibung = new Label(SpaltenDaten.getBeschreibung());
+        TextFeldBeschreibung.setWrapText(true);
+
+        Button ButtonBearbeiten = new Button("Bearbeiten...");
+        Button ButtonLoeschen = new Button("Löschen");
+        Button ButtonClose = new Button("Detailansicht verlassen");
+
+        ButtonBearbeiten.setOnAction(event -> {
+            Tabelle.getSelectionModel().clearSelection();
+            Tabelle.getSelectionModel().select(SpaltenDaten);
+            updateSelectedEntry();
+            Hauptprogramm.setRechteAnsicht(null);
+        });
+        ButtonLoeschen.setOnAction(event -> {
+            Tabelle.getSelectionModel().clearSelection();
+            Tabelle.getSelectionModel().select(SpaltenDaten);
+            deleteSelectedEntrys();
+            Hauptprogramm.setRechteAnsicht(null);
+        });
+        ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
+
+        ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
+        ButtonBearbeiten.setMinWidth(150);
+        ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
+        ButtonLoeschen.setMinWidth(150);
+        ButtonClose.setMaxWidth(Double.MAX_VALUE);
+
+        // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
+        GridPane Oben = new GridPane();
+        Oben.setHgap(10);
+        Oben.setVgap(10);
+        Oben.addColumn(0,LabelArtId, LabelName, LabelBeschreibung);
+        Oben.addColumn(1,LabelArtIdWert, TextFeldName, TextFeldBeschreibung);
+        Oben.getColumnConstraints().add(new ColumnConstraints(100));
+        Oben.getColumnConstraints().add(new ColumnConstraints(200));
+
+        HBox Unten = new HBox(10);
+        Unten.getChildren().addAll(ButtonBearbeiten, ButtonLoeschen);
+        Unten.setMaxWidth(300);
+        Unten.alignmentProperty().setValue(Pos.CENTER);
+
+        VBox Mittelteil = new VBox(10);
+        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonClose);
+
+        ScrollPane Aussen = new ScrollPane();
+
+        Aussen.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        Aussen.setContent(Mittelteil);
+
+        Hauptprogramm.setRechteAnsicht(Aussen);
     }
 
     /**
@@ -197,7 +270,6 @@ public class ArtAnsichtManager {
         TextField TextFeldName = new TextField();
 
         Label LabelBeschreibung = new Label("Beschreibung");
-        LabelBeschreibung.setWrapText(true);
         TextField TextFeldBeschreibung = new TextField();
 
         TextFeldName.setText(Auswahl.getName());
@@ -250,6 +322,11 @@ public class ArtAnsichtManager {
 
     private void deleteSelectedEntrys() {
         ObservableList<ArtDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        if (Nutzerauswahl.isEmpty()) {
+            IM.setErrorText("Es muss mindestens ein Eintrag ausgewählt sein");
+            return;
+        }
+
         Nutzerauswahl.forEach(artDaten -> {
             try {
                 DH.getAnfrageObjekt().executeUpdate("DELETE FROM ART WHERE ArtID = "+ artDaten.getArtID());

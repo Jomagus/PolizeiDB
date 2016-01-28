@@ -4,6 +4,7 @@ import PolizeiPackage.Ansichten.ArtAnsichtManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -32,7 +33,7 @@ public class Main extends Application {
         IEM = new InfoErrorManager();
         DBH = new DatenbankHandler(IEM);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
-        ArtAM = new ArtAnsichtManager(DBH, IEM);
+        ArtAM = new ArtAnsichtManager(DBH, IEM, this);
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
@@ -47,9 +48,6 @@ public class Main extends Application {
         PrimaeresLayout.setTop(getHauptMenueLeiste(HauptMenueManager));
         PrimaeresLayout.setLeft(getLinkeAnsichtenLeiste());
         PrimaeresLayout.setBottom(IEM.getFussleiste());
-
-
-
 
         // Setze die Primaere Scene
         PrimaereScene = new Scene(PrimaeresLayout,1080,720);
@@ -119,7 +117,7 @@ public class Main extends Application {
     private ScrollPane getLinkeAnsichtenLeiste() {
         // Erzeuge eine Innere VBox
         VBox Inneres = new VBox();
-        Inneres.setPadding(new Insets(10));
+        Inneres.setPadding(new Insets(10,20,10,10));    // Damit die Scrollleiste nicht ueber die Buttons geht
         Inneres.setSpacing(8);
         Inneres.alignmentProperty().set(Pos.BASELINE_CENTER);
 
@@ -176,10 +174,15 @@ public class Main extends Application {
         return LinkeLeiste;
     }
 
+    public void setRechteAnsicht(Node Detailansicht) {
+        PrimaeresLayout.setRight(Detailansicht);
+    }
+
     /**
      * Beendet das Programm
      */
     private void BeendeProgramm() {
+        DBH.BeendeDatenbankAnbindung();
         PrimaereStage.close();
     }
 }
