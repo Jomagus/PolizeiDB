@@ -22,32 +22,32 @@ import java.sql.SQLException;
 /**
  * Liefert Tabelle fuer die Art
  */
-public class ArtAnsichtManager {
+public class FallAnsichtManager {
 
     private DatenbankHandler DH;
     private InfoErrorManager IM;
     private Main Hauptprogramm;
-    private TableView<ArtDaten> Tabelle;
+    private TableView<FallDaten> Tabelle;
     private BorderPane DatenAnsicht;
-    private ObservableList<ArtDaten> ArtDatenListe;
-    private boolean ArtAnsichtGeneriert;
+    private ObservableList<FallDaten> FallDatenListe;
+    private boolean FallAnsichtGeneriert;
 
-    public ArtAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
+    public FallAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
         Hauptprogramm = HauptFenster;
-        ArtDatenListe = FXCollections.observableArrayList();
+        FallDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
-        ArtAnsichtGeneriert = false;
+        FallAnsichtGeneriert = false;
     }
 
-    public Node getArtAnsicht() {
-        if (ArtAnsichtGeneriert) {
-            refreshArtAnsicht();
+    public Node getFallAnsicht() {
+        if (FallAnsichtGeneriert) {
+            refreshFallAnsicht();
             return DatenAnsicht;
         }
-        IM.setInfoText("Lade Art Ansicht");
-        DatenAnsicht = new BorderPane(getArtAnsichtInnereTabelle());
+        IM.setInfoText("Lade Fall Ansicht");
+        DatenAnsicht = new BorderPane(getFallAnsichtInnereTabelle());
 
         HBox ButtonLeiste = new HBox(10);
         ButtonLeiste.setPadding(new Insets(10));
@@ -63,37 +63,43 @@ public class ArtAnsichtManager {
         ButtonLeiste.getChildren().addAll(ButtonNeue, ButtonChan, ButtonDele);
         DatenAnsicht.setBottom(ButtonLeiste);
 
-        IM.setInfoText("Laden der Art Ansicht erfolgreich");
-        ArtAnsichtGeneriert = true;
+        IM.setInfoText("Laden der Fall Ansicht erfolgreich");
+        FallAnsichtGeneriert = true;
         return DatenAnsicht;
     }
 
     /**
      * Erzeugt eine TableView mit den Daten aus der Datenbank.
      *
-     * @return Eine TableView mit Art Daten
+     * @return Eine TableView mit Fall Daten
      */
-    private Node getArtAnsichtInnereTabelle() {
-        refreshArtAnsicht();
+    private Node getFallAnsichtInnereTabelle() {
+        refreshFallAnsicht();
 
         // Name Spalte
-        TableColumn<ArtDaten, String> SpalteName = new TableColumn<>("Name");
+        TableColumn<FallDaten, String> SpalteName = new TableColumn<>("Name");
         SpalteName.setMinWidth(200);
         SpalteName.setCellValueFactory(new PropertyValueFactory<>("Name"));
 
-        // Beschreibung Spalte
-        TableColumn<ArtDaten, String> SpalteBeschreibung = new TableColumn<>("Beschreibung");
-        SpalteBeschreibung.setMinWidth(200);
-        SpalteBeschreibung.setCellValueFactory(new PropertyValueFactory<>("Beschreibung"));
+        // Eroeffnungsdatum Spalte
+        TableColumn<FallDaten, String> SpalteDatumA = new TableColumn<>("Eröffnungsdatum");
+        SpalteDatumA.setMinWidth(200);
+        SpalteDatumA.setCellValueFactory(new PropertyValueFactory<>("Eroeffnungsdatum"));
 
-        Tabelle.setItems(ArtDatenListe);
+        // Enddatum Spalte
+        TableColumn<FallDaten, String> SpalteDatumB = new TableColumn<>("Enddatum");
+        SpalteDatumB.setMinWidth(200);
+        SpalteDatumB.setCellValueFactory(new PropertyValueFactory<>("Enddatum"));
+
+        Tabelle.setItems(FallDatenListe);
         Tabelle.getColumns().add(SpalteName);
-        Tabelle.getColumns().add(SpalteBeschreibung);
+        Tabelle.getColumns().add(SpalteDatumA);
+        Tabelle.getColumns().add(SpalteDatumB);
         Tabelle.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Doppelklicke auf Spalten sollen Detailansichten oeffnen:
         Tabelle.setRowFactory(param -> {
-            TableRow<ArtDaten> Spalte = new TableRow<>();
+            TableRow<FallDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
@@ -105,20 +111,22 @@ public class ArtAnsichtManager {
         return Tabelle;
     }
 
-    private void erzeugeDetailAnsicht(ArtDaten SpaltenDaten) {
-        Label LabelArtId = new Label("ArtID");
-        Label LabelArtIdWert = new Label(Integer.toString(SpaltenDaten.getArtID()));
+    private void erzeugeDetailAnsicht(FallDaten SpaltenDaten) {
+        Label LabelArtId = new Label("FallID");
+        Label LabelArtIdWert = new Label(Integer.toString(SpaltenDaten.getFallID()));
 
         Label LabelName = new Label("Name");
         Label TextFeldName = new Label(SpaltenDaten.getName());
 
-        Label LabelBeschreibung = new Label("Beschreibung");
-        Label TextFeldBeschreibung = new Label(SpaltenDaten.getBeschreibung());
-        TextFeldBeschreibung.setWrapText(true);
+        Label LabelDatumA = new Label("Enddatum");
+        Label LabelDatumAInhalt = new Label(SpaltenDaten.getEroeffnungsdatum());
+
+        Label LabelDatumB = new Label("Eröffnungsdatum");
+        Label LabelDatumBInhalt = new Label(SpaltenDaten.getEnddatum());
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheArtID = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -133,7 +141,7 @@ public class ArtAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-        ButtonSucheArtID.setOnAction(event -> {
+        ButtonSucheFallId.setOnAction(event -> {
 
 
             //TODO verlinkte auf eingeschraenkte Ansicht von Verbrechen, mit Filter von dieser ArtID
@@ -145,15 +153,15 @@ public class ArtAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheArtID.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
         GridPane Oben = new GridPane();
         Oben.setHgap(10);
         Oben.setVgap(10);
-        Oben.addColumn(0,LabelArtId, LabelName, LabelBeschreibung);
-        Oben.addColumn(1,LabelArtIdWert, TextFeldName, TextFeldBeschreibung);
+        Oben.addColumn(0,LabelArtId, LabelName, LabelDatumA, LabelDatumB);
+        Oben.addColumn(1,LabelArtIdWert, TextFeldName, LabelDatumAInhalt, LabelDatumBInhalt);
         Oben.getColumnConstraints().add(new ColumnConstraints(100));
         Oben.getColumnConstraints().add(new ColumnConstraints(200));
 
@@ -164,7 +172,7 @@ public class ArtAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10,20,10,10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArtID, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheFallId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -177,13 +185,19 @@ public class ArtAnsichtManager {
     /**
      * Aktualisiert die JavaFX vorliegenden Daten mit Daten aus der Datenbank.
      */
-    public void refreshArtAnsicht() {
-        ArtDatenListe.clear();
+    public void refreshFallAnsicht() {
+        FallDatenListe.clear();
         ResultSet AnfrageAntwort;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM ART");
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM FALL");
             while (AnfrageAntwort.next()) {
-                ArtDatenListe.add(new ArtDaten(AnfrageAntwort.getInt("ArtID"), AnfrageAntwort.getString("Name"), AnfrageAntwort.getString("Beschreibung")));
+                if (AnfrageAntwort.getObject("Enddatum") != null) {
+                    FallDatenListe.add(new FallDaten(AnfrageAntwort.getInt("FallID"), AnfrageAntwort.getString("Name"),
+                            AnfrageAntwort.getString("Eröffnungsdatum"), AnfrageAntwort.getString("Enddatum")));
+                } else {
+                    FallDatenListe.add(new FallDaten(AnfrageAntwort.getInt("FallID"), AnfrageAntwort.getString("Name"),
+                            AnfrageAntwort.getString("Eröffnungsdatum"), "Unbekannt"));
+                }
             }
         } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
     }
@@ -200,11 +214,12 @@ public class ArtAnsichtManager {
         Gitter.setVgap(10);
 
         Label LabelName = new Label("Name");
-        TextField TextFeldName = new TextField();
+        Label LabelA = new Label("Eröffnungsdatum");
+        Label LabelB = new Label("Enddatum");
 
-        Label LabelBeschreibung = new Label("Beschreibung");
-        LabelBeschreibung.setWrapText(true);
-        TextField TextFeldBeschreibung = new TextField();
+        TextField TextFeldName = new TextField();
+        TextField TextFeldA = new TextField();
+        TextField TextFeldB = new TextField();
 
         Button ButtonFort = new Button("Hinzufügen");
         Button ButtonAbb = new Button("Abbrechen");
@@ -215,8 +230,8 @@ public class ArtAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelName, LabelBeschreibung);
-        Gitter.addColumn(1, TextFeldName, TextFeldBeschreibung);
+        Gitter.addColumn(0,  LabelName, LabelA, LabelB);
+        Gitter.addColumn(1, TextFeldName, TextFeldA, TextFeldB);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -233,17 +248,18 @@ public class ArtAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "INSERT INTO ART (Name, Beschreibung) VALUES (?, ?)";
+            String SQLString = "INSERT INTO ART (Name, Eröffnungsdatum, Enddatum) VALUES (?, ?, ?)";
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, TextFeldName.getText());
-                InsertStatement.setString(2, TextFeldBeschreibung.getText());
+                InsertStatement.setString(2, TextFeldA.getText());
+                InsertStatement.setString(3, TextFeldB.getText());
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Einfügen Fehlgeschlagen", e);
             }
-            refreshArtAnsicht();
+            refreshFallAnsicht();
             PopUp.close();
         });
 
@@ -252,12 +268,12 @@ public class ArtAnsichtManager {
     }
 
     private void updateSelectedEntry() {
-        ObservableList<ArtDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<FallDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.size() != 1) {
             IM.setErrorText("Es muss genau ein Element ausgewählt werden");
             return;
         }
-        ArtDaten Auswahl = Nutzerauswahl.get(0);
+        FallDaten Auswahl = Nutzerauswahl.get(0);
 
         // Jetzt erzeugen wir ein PopUp zum veraendern des Eintrags
 
@@ -271,17 +287,21 @@ public class ArtAnsichtManager {
         Gitter.setHgap(10);
         Gitter.setVgap(10);
 
-        Label LabelArtId = new Label("ArtID");
-        Label LabelArtIdWert = new Label(Integer.toString(Auswahl.getArtID()));
+        Label LabelArtId = new Label("FallID");
+        Label LabelArtIdWert = new Label(Integer.toString(Auswahl.getFallID()));
 
         Label LabelName = new Label("Name");
         TextField TextFeldName = new TextField();
 
-        Label LabelBeschreibung = new Label("Beschreibung");
-        TextField TextFeldBeschreibung = new TextField();
+        Label LabelDatumA = new Label("Beschreibung");
+        TextField TextFeldA = new TextField();
+
+        Label LabelDatumB = new Label("Beschreibung");
+        TextField TextFeldB = new TextField();
 
         TextFeldName.setText(Auswahl.getName());
-        TextFeldBeschreibung.setText(Auswahl.getBeschreibung());
+        TextFeldA.setText(Auswahl.getEroeffnungsdatum());
+        TextFeldB.setText(Auswahl.getEnddatum());
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -292,8 +312,8 @@ public class ArtAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelArtId, LabelName, LabelBeschreibung);
-        Gitter.addColumn(1, LabelArtIdWert, TextFeldName, TextFeldBeschreibung);
+        Gitter.addColumn(0, LabelArtId, LabelName, LabelDatumA, LabelDatumB);
+        Gitter.addColumn(1, LabelArtIdWert, TextFeldName, TextFeldA, TextFeldB);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -310,17 +330,18 @@ public class ArtAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE ART SET Name=?, Beschreibung=? WHERE ArtID = " + Auswahl.getArtID();
+            String SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=? WHERE ArtID = " + Auswahl.getFallID();
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, TextFeldName.getText());
-                SQLInjektionNeinNein.setString(2, TextFeldBeschreibung.getText());
+                SQLInjektionNeinNein.setString(2, TextFeldA.getText());
+                SQLInjektionNeinNein.setString(3, TextFeldB.getText());
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Ändern Fehlgeschlagen", e);
             }
-            refreshArtAnsicht();
+            refreshFallAnsicht();
             PopUp.close();
         });
 
@@ -329,19 +350,19 @@ public class ArtAnsichtManager {
     }
 
     private void deleteSelectedEntrys() {
-        ObservableList<ArtDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<FallDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.isEmpty()) {
             IM.setErrorText("Es muss mindestens ein Eintrag ausgewählt sein");
             return;
         }
 
-        Nutzerauswahl.forEach(artDaten -> {
+        Nutzerauswahl.forEach(fallDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ART WHERE ArtID = "+ artDaten.getArtID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM FALL WHERE FallID = "+ fallDaten.getFallID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }
         });
-        refreshArtAnsicht();
+        refreshFallAnsicht();
     }
 }

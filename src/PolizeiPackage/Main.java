@@ -1,6 +1,7 @@
 package PolizeiPackage;
 
 import PolizeiPackage.Ansichten.ArtAnsichtManager;
+import PolizeiPackage.Ansichten.FallAnsichtManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,6 +23,7 @@ public class Main extends Application {
     DatenbankHandler DBH;
     InfoErrorManager IEM;
     ArtAnsichtManager ArtAM;
+    FallAnsichtManager FallAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -34,6 +36,7 @@ public class Main extends Application {
         DBH = new DatenbankHandler(IEM);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
         ArtAM = new ArtAnsichtManager(DBH, IEM, this);
+        FallAM = new FallAnsichtManager(DBH, IEM, this);
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
@@ -151,7 +154,7 @@ public class Main extends Application {
 
         // Definiere Klickverhalten
 
-        Faelle.setOnAction(event -> {});
+        Faelle.setOnAction(event -> PrimaeresLayout.setCenter(FallAM.getFallAnsicht()));
         Verbrechen.setOnAction(event -> {});
         Arten.setOnAction(event -> PrimaeresLayout.setCenter(ArtAM.getArtAnsicht()));
         Bezirke.setOnAction(event -> {});
