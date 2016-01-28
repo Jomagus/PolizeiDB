@@ -1,5 +1,6 @@
 package PolizeiPackage;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -52,6 +53,7 @@ public abstract class BestaetigungsBox {
         HBox InnenBox = new HBox();
 
         AussenBox.setSpacing(10);
+        AussenBox.setPadding(new Insets(10));
         InnenBox.setSpacing(10);
 
         AussenBox.setAlignment(Pos.CENTER);

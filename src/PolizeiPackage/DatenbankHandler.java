@@ -37,7 +37,9 @@ public class DatenbankHandler {
         } catch (SQLException e) {
             IEM.setErrorText(e.getMessage());
             System.err.println(e.getMessage()); //TODO ordentliches Errorhandling
+            return;
         }
+        IEM.setInfoText("Verbindung zur Datenbank hergestellt");
     }
 
     /**

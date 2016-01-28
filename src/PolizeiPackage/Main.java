@@ -1,6 +1,6 @@
 package PolizeiPackage;
 
-import PolizeiPackage.Ansichten.AnsichtenManager;
+import PolizeiPackage.Ansichten.ArtAnsichtManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +20,7 @@ public class Main extends Application {
     BorderPane PrimaeresLayout;
     DatenbankHandler DBH;
     InfoErrorManager IEM;
-    AnsichtenManager Ansichten;
+    ArtAnsichtManager ArtAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -32,7 +32,7 @@ public class Main extends Application {
         IEM = new InfoErrorManager();
         DBH = new DatenbankHandler(IEM);
         HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
-        Ansichten = new AnsichtenManager(DBH, IEM);
+        ArtAM = new ArtAnsichtManager(DBH, IEM);
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
@@ -123,7 +123,7 @@ public class Main extends Application {
         Inneres.setSpacing(8);
         Inneres.alignmentProperty().set(Pos.BASELINE_CENTER);
 
-        Label Beschriftung = new Label("Ansichten");
+        Label Beschriftung = new Label("ArtAM");
 
         // Lege Buttons an
         Button Faelle = new Button("Fälle");
@@ -155,7 +155,7 @@ public class Main extends Application {
 
         Faelle.setOnAction(event -> {});
         Verbrechen.setOnAction(event -> {});
-        Arten.setOnAction(event -> PrimaeresLayout.setCenter(Ansichten.getArtAnsicht()));
+        Arten.setOnAction(event -> PrimaeresLayout.setCenter(ArtAM.getArtAnsicht()));
         Bezirke.setOnAction(event -> {});
         Behoerden.setOnAction(event -> {});
         Personen.setOnAction(event -> {});

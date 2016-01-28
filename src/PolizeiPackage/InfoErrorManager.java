@@ -59,6 +59,11 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
         InfoLabel.setText(InfoText);
     }
 
+    public void setErrorText(String InfoText, Exception e) {
+        InfoLabel.setTextFill(Color.RED);
+        InfoLabel.setText(InfoText);
+    }
+
     /**
      * Löscht den Text aus der Fussleiste
      */
