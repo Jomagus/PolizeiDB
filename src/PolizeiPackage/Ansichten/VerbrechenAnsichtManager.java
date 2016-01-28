@@ -224,14 +224,14 @@ public class VerbrechenAnsichtManager {
         VerbrechenDatenListe.clear();
         ResultSet AnfrageAntwort;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
                     "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
                     "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
                     "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID");
             while (AnfrageAntwort.next()) {
-                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(0), AnfrageAntwort.getString(1),
-                        AnfrageAntwort.getString(2), AnfrageAntwort.getInt(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5),
-                        AnfrageAntwort.getString(6), AnfrageAntwort.getString(7), AnfrageAntwort.getString(8)));
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
         } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
     }
