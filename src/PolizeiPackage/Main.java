@@ -1,9 +1,6 @@
 package PolizeiPackage;
 
-import PolizeiPackage.Ansichten.ArtAnsichtManager;
-import PolizeiPackage.Ansichten.BezirkAnsichtManager;
-import PolizeiPackage.Ansichten.FallAnsichtManager;
-import PolizeiPackage.Ansichten.VerbrechenAnsichtManager;
+import PolizeiPackage.Ansichten.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,6 +25,7 @@ public class Main extends Application {
     FallAnsichtManager FallAM;
     VerbrechenAnsichtManager VerbrechenAM;
     BezirkAnsichtManager BezirkAM;
+    BehoerdenAnsichtManager BehAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -43,6 +41,7 @@ public class Main extends Application {
         FallAM = new FallAnsichtManager(DBH, IEM, this);
         VerbrechenAM = new VerbrechenAnsichtManager(DBH, IEM, this);
         BezirkAM = new BezirkAnsichtManager(DBH, IEM, this);
+        BehAM = new BehoerdenAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -173,7 +172,7 @@ public class Main extends Application {
         Verbrechen.setOnAction(event -> PrimaeresLayout.setCenter(VerbrechenAM.getVerbrechenAnsicht()));
         Arten.setOnAction(event -> PrimaeresLayout.setCenter(ArtAM.getArtAnsicht()));
         Bezirke.setOnAction(event -> PrimaeresLayout.setCenter(BezirkAM.getBezirkAnsicht()));
-        Behoerden.setOnAction(event -> {});
+        Behoerden.setOnAction(event -> PrimaeresLayout.setCenter(BehAM.getBehoerdenAnsicht()));
         Personen.setOnAction(event -> {});
         Polizisten.setOnAction(event -> {});
         Notizen.setOnAction(event -> {});
