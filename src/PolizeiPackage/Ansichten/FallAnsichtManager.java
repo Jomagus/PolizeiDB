@@ -31,6 +31,7 @@ public class FallAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<FallDaten> FallDatenListe;
     private boolean FallAnsichtGeneriert;
+    private VerbrechenAnsichtManager VerAM;
 
     public FallAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +40,10 @@ public class FallAnsichtManager {
         FallDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         FallAnsichtGeneriert = false;
+    }
+
+    public void setVerbrechenAnsichtManager(VerbrechenAnsichtManager VAM) {
+        VerAM = VAM;
     }
 
     public Node getFallAnsicht() {
@@ -142,10 +147,8 @@ public class FallAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
         });
         ButtonSucheFallId.setOnAction(event -> {
-
-
-            //TODO verlinkte auf eingeschraenkte Ansicht von Verbrechen, mit Filter von dieser ArtID
-
+            Hauptprogramm.setRechteAnsicht(null);
+            VerAM.FallAnsichtQuer(SpaltenDaten.getFallID());
         });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 

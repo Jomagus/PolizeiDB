@@ -41,6 +41,9 @@ public class Main extends Application {
         FallAM = new FallAnsichtManager(DBH, IEM, this);
         VerbrechenAM = new VerbrechenAnsichtManager(DBH, IEM, this);
 
+        ArtAM.setVerbrechensManager(VerbrechenAM);
+        FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
+
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;
         PrimaereStage.setTitle("PolizeiDB");
@@ -139,8 +142,11 @@ public class Main extends Application {
         Button Polizisten = new Button("Polizisten");
         Button Notizen = new Button("Notizen");
         Button Indizien = new Button("Indizien");
+        Button Opfer = new Button("Opfer");
+        Button Verdaechtige = new Button("Verdächtige");
         Button Arbeiten = new Button("Arbeiten");
         Button ArbeitenAn = new Button("Arbeiten an");
+        Button LiegtIn = new Button("Liegt in");
 
         // Formatiere alle Buttons gleich breit
         Faelle.setMaxWidth(Double.MAX_VALUE);
@@ -152,8 +158,11 @@ public class Main extends Application {
         Polizisten.setMaxWidth(Double.MAX_VALUE);
         Notizen.setMaxWidth(Double.MAX_VALUE);
         Indizien.setMaxWidth(Double.MAX_VALUE);
+        Opfer.setMaxWidth(Double.MAX_VALUE);
+        Verdaechtige.setMaxWidth(Double.MAX_VALUE);
         Arbeiten.setMaxWidth(Double.MAX_VALUE);
         ArbeitenAn.setMaxWidth(Double.MAX_VALUE);
+        LiegtIn.setMaxWidth(Double.MAX_VALUE);
 
         // Definiere Klickverhalten
 
@@ -166,11 +175,14 @@ public class Main extends Application {
         Polizisten.setOnAction(event -> {});
         Notizen.setOnAction(event -> {});
         Indizien.setOnAction(event -> {});
+        Opfer.setOnAction(event -> {});
+        Verdaechtige.setOnAction(event -> {});
         Arbeiten.setOnAction(event -> {});
         ArbeitenAn.setOnAction(event -> {});
+        LiegtIn.setOnAction(event -> {});
 
 
-        Inneres.getChildren().addAll(Beschriftung, Faelle, Verbrechen, Arten, Bezirke, Behoerden, Personen, Polizisten, Notizen, Indizien, Arbeiten, ArbeitenAn);
+        Inneres.getChildren().addAll(Beschriftung, Faelle, Verbrechen, Arten, Bezirke, Behoerden, Personen, Polizisten, Notizen, Indizien, Opfer, Verdaechtige, Arbeiten, ArbeitenAn, LiegtIn);
 
         // Bette alles in ein ScrollPane ein
         ScrollPane LinkeLeiste = new ScrollPane();
@@ -182,6 +194,10 @@ public class Main extends Application {
 
     public void setRechteAnsicht(Node Detailansicht) {
         PrimaeresLayout.setRight(Detailansicht);
+    }
+
+    public void setMittlereAnsicht(Node Centeransicht) {
+        PrimaeresLayout.setCenter(Centeransicht);
     }
 
     /**

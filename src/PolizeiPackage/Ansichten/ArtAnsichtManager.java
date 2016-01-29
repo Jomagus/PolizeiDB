@@ -31,6 +31,7 @@ public class ArtAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<ArtDaten> ArtDatenListe;
     private boolean ArtAnsichtGeneriert;
+    private VerbrechenAnsichtManager VerAM;
 
     public ArtAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +40,10 @@ public class ArtAnsichtManager {
         ArtDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         ArtAnsichtGeneriert = false;
+    }
+
+    public void setVerbrechensManager(VerbrechenAnsichtManager VAM) {
+        VerAM = VAM;
     }
 
     public Node getArtAnsicht() {
@@ -134,10 +139,8 @@ public class ArtAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
         });
         ButtonSucheArtID.setOnAction(event -> {
-
-
-            //TODO verlinkte auf eingeschraenkte Ansicht von Verbrechen, mit Filter von dieser ArtID
-
+            Hauptprogramm.setRechteAnsicht(null);
+            VerAM.ArtAnsichtQuer(SpaltenDaten.getArtID());
         });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 

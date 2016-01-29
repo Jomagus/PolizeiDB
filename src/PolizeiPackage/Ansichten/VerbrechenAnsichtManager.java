@@ -239,7 +239,7 @@ public class VerbrechenAnsichtManager {
     private void insertNewEntry() {
         Stage PopUp = new Stage();
         PopUp.initModality(Modality.APPLICATION_MODAL);
-        PopUp.setTitle("Eintrag hinzufügen");
+        PopUp.setTitle("Neuer Eintrag");
         PopUp.setAlwaysOnTop(true);
         PopUp.setResizable(false);
 
@@ -253,19 +253,76 @@ public class VerbrechenAnsichtManager {
         Label LabelC = new Label("Datum");
         TextField LabelCWert = new TextField();
 
-        //TODO hier automatisch fetchen was die BezirksID ist
+        Label LabelD = new Label("Bezirk");
+        Label LabelDWert = new Label();
 
         Label LabelE = new Label("BezirksID");
         TextField LabelEWert = new TextField();
 
+        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM BEZIRK WHERE BezirksID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelDWert.setText(Antwort.getString(1));
+                } else {
+                    LabelDWert.setText("Ungültige BezirksID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelDWert.setText("BezirksID muss eine Zahl sein");
+            }
+        }));
+
+        Label LabelF = new Label("Fall");
+        Label LabelFWert = new Label();
+
         Label LabelG = new Label("FallID");
         TextField LabelGWert = new TextField();
+
+        LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM FALL WHERE FallID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelFWert.setText(Antwort.getString(1));
+                } else {
+                    LabelFWert.setText("Ungültige FallID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelFWert.setText("FallID muss eine Zahl sein");
+            }
+        }));
+
+        Label LabelH = new Label("Art");
+        Label LabelHWert = new Label();
 
         Label LabelI = new Label("ArtID");
         TextField LabelIWert = new TextField();
 
+        LabelIWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM ART WHERE ArtID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelHWert.setText(Antwort.getString(1));
+                } else {
+                    LabelHWert.setText("Ungültige ArtID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelHWert.setText("ArtID muss eine Zahl sein");
+            }
+        }));
 
-        Button ButtonFort = new Button("Hinzufügen");
+        Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
 
         ButtonFort.defaultButtonProperty();
@@ -274,8 +331,8 @@ public class VerbrechenAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelB, LabelC, LabelE, LabelE, LabelG, LabelI);
-        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelEWert, LabelEWert, LabelGWert, LabelIWert);
+        Gitter.addColumn(0, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG, LabelH, LabelI);
+        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert, LabelHWert, LabelIWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -348,17 +405,68 @@ public class VerbrechenAnsichtManager {
         Label LabelE = new Label("BezirksID");
         TextField LabelEWert = new TextField();
 
+        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM BEZIRK WHERE BezirksID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelDWert.setText(Antwort.getString(1));
+                } else {
+                    LabelDWert.setText("Ungültige BezirksID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelDWert.setText("BezirksID muss eine Zahl sein");
+            }
+        }));
+
         Label LabelF = new Label("Fall");
         Label LabelFWert = new Label(Auswahl.getFallName());
 
         Label LabelG = new Label("FallID");
         TextField LabelGWert = new TextField();
 
+        LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM FALL WHERE FallID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelFWert.setText(Antwort.getString(1));
+                } else {
+                    LabelFWert.setText("Ungültige FallID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelFWert.setText("FallID muss eine Zahl sein");
+            }
+        }));
+
         Label LabelH = new Label("Art");
         Label LabelHWert = new Label(Auswahl.getArtName());
 
         Label LabelI = new Label("ArtID");
         TextField LabelIWert = new TextField();
+
+        LabelIWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM ART WHERE ArtID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelHWert.setText(Antwort.getString(1));
+                } else {
+                    LabelHWert.setText("Ungültige ArtID");
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {
+                LabelHWert.setText("ArtID muss eine Zahl sein");
+            }
+        }));
 
         LabelBWert.setText(Auswahl.getArtName());
         LabelCWert.setText(Auswahl.getDatum());
@@ -398,9 +506,9 @@ public class VerbrechenAnsichtManager {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, LabelBWert.getText());
                 SQLInjektionNeinNein.setString(2, LabelCWert.getText());
-                SQLInjektionNeinNein.setString(3, LabelEWert.getText());
-                SQLInjektionNeinNein.setString(4, LabelGWert.getText());
-                SQLInjektionNeinNein.setString(5, LabelIWert.getText());
+                SQLInjektionNeinNein.setInt(3, Integer.parseInt(LabelEWert.getText()));
+                SQLInjektionNeinNein.setInt(4, Integer.parseInt(LabelGWert.getText()));
+                SQLInjektionNeinNein.setInt(5, Integer.parseInt(LabelIWert.getText()));
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (SQLException e) {
@@ -429,5 +537,48 @@ public class VerbrechenAnsichtManager {
             }
         });
         refreshVerbrechenAnsicht();
+    }
+
+    /**
+     * Praesentiert nur Verbrechen die die spezifizierte ArtID haben
+     *
+     * @param ArtID Die ArtID der Darzustellenden Verbrechen
+     */
+    public void ArtAnsichtQuer(int ArtID) {
+        Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
+        VerbrechenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
+                    "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
+                    "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
+                    "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.gehört_zu_ArtID = ?");
+            Anfrage.setInt(1, ArtID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
+            }
+        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+    }
+
+    public void FallAnsichtQuer(int FallID) {
+        Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
+        VerbrechenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
+                    "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
+                    "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
+                    "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.gehört_zu_FallID = ?");
+            Anfrage.setInt(1, FallID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
+            }
+        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
     }
 }
