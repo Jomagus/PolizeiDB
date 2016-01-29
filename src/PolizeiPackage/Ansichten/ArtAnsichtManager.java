@@ -188,7 +188,9 @@ public class ArtAnsichtManager {
             while (AnfrageAntwort.next()) {
                 ArtDatenListe.add(new ArtDaten(AnfrageAntwort.getInt("ArtID"), AnfrageAntwort.getString("Name"), AnfrageAntwort.getString("Beschreibung")));
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 
     private void insertNewEntry() {

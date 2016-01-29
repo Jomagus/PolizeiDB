@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.sqlite.core.DB;
 
 /**
  * Hauptklasse und Startpunkt
@@ -26,6 +27,7 @@ public class Main extends Application {
     VerbrechenAnsichtManager VerbrechenAM;
     BezirkAnsichtManager BezirkAM;
     BehoerdenAnsichtManager BehAM;
+    PersonenAnsichtManager PersonenAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -42,6 +44,7 @@ public class Main extends Application {
         VerbrechenAM = new VerbrechenAnsichtManager(DBH, IEM, this);
         BezirkAM = new BezirkAnsichtManager(DBH, IEM, this);
         BehAM = new BehoerdenAnsichtManager(DBH, IEM, this);
+        PersonenAM = new PersonenAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -173,7 +176,7 @@ public class Main extends Application {
         Arten.setOnAction(event -> PrimaeresLayout.setCenter(ArtAM.getArtAnsicht()));
         Bezirke.setOnAction(event -> PrimaeresLayout.setCenter(BezirkAM.getBezirkAnsicht()));
         Behoerden.setOnAction(event -> PrimaeresLayout.setCenter(BehAM.getBehoerdenAnsicht()));
-        Personen.setOnAction(event -> {});
+        Personen.setOnAction(event -> PrimaeresLayout.setCenter(PersonenAM.getPersonenAnsicht()));
         Polizisten.setOnAction(event -> {});
         Notizen.setOnAction(event -> {});
         Indizien.setOnAction(event -> {});

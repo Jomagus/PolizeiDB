@@ -233,7 +233,9 @@ public class VerbrechenAnsichtManager {
                         AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
                         AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 
     private void insertNewEntry() {
@@ -501,7 +503,7 @@ public class VerbrechenAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE Verbrechen SET Name=?, Datum=?, geschieht_in_BezirksID=?, gehört_zu_FallID=?, gehört_zu_ArtID=?  WHERE VerbrechensID = " + Auswahl.getVerbrechensID();
+            String SQLString = "UPDATE VERBRECHEN SET Name=?, Datum=?, geschieht_in_BezirksID=?, gehört_zu_FallID=?, gehört_zu_ArtID=?  WHERE VerbrechensID = " + Auswahl.getVerbrechensID();
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, LabelBWert.getText());

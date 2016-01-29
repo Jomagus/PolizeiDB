@@ -201,7 +201,9 @@ public class BehoerdenAnsichtManager {
                 BehoerdenDatenListe.add(new BehoerdenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
                         AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getString(5)));
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 
     private void insertNewEntry() {

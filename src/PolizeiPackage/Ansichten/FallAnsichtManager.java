@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Struct;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -199,10 +200,12 @@ public class FallAnsichtManager {
                             AnfrageAntwort.getString("Eröffnungsdatum"), AnfrageAntwort.getString("Enddatum")));
                 } else {
                     FallDatenListe.add(new FallDaten(AnfrageAntwort.getInt("FallID"), AnfrageAntwort.getString("Name"),
-                            AnfrageAntwort.getString("Eröffnungsdatum"), "Unbekannt"));
+                            AnfrageAntwort.getString("Eröffnungsdatum"), ""));
                 }
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 
     private void insertNewEntry() {
@@ -251,12 +254,19 @@ public class FallAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "INSERT INTO ART (Name, Eröffnungsdatum, Enddatum) VALUES (?, ?, ?)";
+            String SQLString;
+            if (TextFeldB.getText().isEmpty()) {
+                SQLString = "INSERT INTO ART (Name, Eröffnungsdatum) VALUES (?, ?)";
+            } else {
+                SQLString = "INSERT INTO ART (Name, Eröffnungsdatum, Enddatum) VALUES (?, ?, ?)";
+            }
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, TextFeldName.getText());
                 InsertStatement.setString(2, TextFeldA.getText());
-                InsertStatement.setString(3, TextFeldB.getText());
+                if (!TextFeldB.getText().isEmpty()) {
+                    InsertStatement.setString(3, TextFeldB.getText());
+                }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
             } catch (SQLException e) {
@@ -333,12 +343,19 @@ public class FallAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=? WHERE FallID = " + Auswahl.getFallID();
+            String SQLString;
+            if (TextFeldB.getText().isEmpty()) {
+                SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=? WHERE FallID = " + Auswahl.getFallID();
+            } else {
+                SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=? WHERE FallID = " + Auswahl.getFallID();
+            }
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, TextFeldName.getText());
                 SQLInjektionNeinNein.setString(2, TextFeldA.getText());
-                SQLInjektionNeinNein.setString(3, TextFeldB.getText());
+                if (!TextFeldB.getText().isEmpty()) {
+                    SQLInjektionNeinNein.setString(3, TextFeldB.getText());
+                }
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (SQLException e) {

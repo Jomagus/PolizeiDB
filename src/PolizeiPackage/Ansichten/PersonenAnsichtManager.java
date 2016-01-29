@@ -22,32 +22,32 @@ import java.sql.SQLException;
 /**
  * Liefert Tabelle fuer die Art
  */
-public class BezirkAnsichtManager {
+public class PersonenAnsichtManager {
 
     private DatenbankHandler DH;
     private InfoErrorManager IM;
     private Main Hauptprogramm;
-    private TableView<BezirkDaten> Tabelle;
+    private TableView<PersonenDaten> Tabelle;
     private BorderPane DatenAnsicht;
-    private ObservableList<BezirkDaten> BezirkDatenListe;
-    private boolean BezirkAnsichtGeneriert;
+    private ObservableList<PersonenDaten> PersonenDatenListe;
+    private boolean PersonenAnsichtGeneriert;
 
-    public BezirkAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
+    public PersonenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
         Hauptprogramm = HauptFenster;
-        BezirkDatenListe = FXCollections.observableArrayList();
+        PersonenDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
-        BezirkAnsichtGeneriert = false;
+        PersonenAnsichtGeneriert = false;
     }
 
-    public Node getBezirkAnsicht() {
-        if (BezirkAnsichtGeneriert) {
-            refreshBezirkAnsicht();
+    public Node getPersonenAnsicht() {
+        if (PersonenAnsichtGeneriert) {
+            refreshPersonenAnsicht();
             return DatenAnsicht;
         }
-        IM.setInfoText("Lade Bezirk Ansicht");
-        DatenAnsicht = new BorderPane(getBezirkAnsichtInnereTabelle());
+        IM.setInfoText("Lade Personen Ansicht");
+        DatenAnsicht = new BorderPane(getPersonenAnsichtInnereTabelle());
 
         HBox ButtonLeiste = new HBox(10);
         ButtonLeiste.setPadding(new Insets(10));
@@ -63,32 +63,56 @@ public class BezirkAnsichtManager {
         ButtonLeiste.getChildren().addAll(ButtonNeue, ButtonChan, ButtonDele);
         DatenAnsicht.setBottom(ButtonLeiste);
 
-        IM.setInfoText("Laden der Bezirk Ansicht erfolgreich");
-        BezirkAnsichtGeneriert = true;
+        IM.setInfoText("Laden der Personen Ansicht erfolgreich");
+        PersonenAnsichtGeneriert = true;
         return DatenAnsicht;
     }
 
     /**
      * Erzeugt eine TableView mit den Daten aus der Datenbank.
      *
-     * @return Eine TableView mit Bezirk Daten
+     * @return Eine TableView mit Personen Daten
      */
-    private Node getBezirkAnsichtInnereTabelle() {
-        refreshBezirkAnsicht();
+    private Node getPersonenAnsichtInnereTabelle() {
+        refreshPersonenAnsicht();
 
         // Name Spalte
-        TableColumn<BezirkDaten, String> SpalteName = new TableColumn<>("Name");
+        TableColumn<PersonenDaten, String> SpalteName = new TableColumn<>("Name");
         SpalteName.setMinWidth(200);
         SpalteName.setCellValueFactory(new PropertyValueFactory<>("Name"));
 
-        Tabelle.setItems(BezirkDatenListe);
+        // GebDatum Spalte
+        TableColumn<PersonenDaten, String> SpalteDatum = new TableColumn<>("Geburtsdatum");
+        SpalteDatum.setMinWidth(200);
+        SpalteDatum.setCellValueFactory(new PropertyValueFactory<>("GebDatum"));
+
+        // Bezirk Spalte
+        TableColumn<PersonenDaten, String> SpalteNation = new TableColumn<>("Nationalität");
+        SpalteNation.setMinWidth(200);
+        SpalteNation.setCellValueFactory(new PropertyValueFactory<>("Nation"));
+
+        // Fall Spalte
+        TableColumn<PersonenDaten, String> SpalteGeschlecht = new TableColumn<>("Geschlecht");
+        SpalteGeschlecht.setMinWidth(200);
+        SpalteGeschlecht.setCellValueFactory(new PropertyValueFactory<>("Geschlecht"));
+
+        // Art Spalte
+        TableColumn<PersonenDaten, String> SpalteTod = new TableColumn<>("Todesdatum");
+        SpalteTod.setMinWidth(200);
+        SpalteTod.setCellValueFactory(new PropertyValueFactory<>("TodDatum"));
+
+        Tabelle.setItems(PersonenDatenListe);
         Tabelle.getColumns().add(SpalteName);
+        Tabelle.getColumns().add(SpalteDatum);
+        Tabelle.getColumns().add(SpalteNation);
+        Tabelle.getColumns().add(SpalteGeschlecht);
+        Tabelle.getColumns().add(SpalteTod);
 
         Tabelle.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Doppelklicke auf Spalten sollen Detailansichten oeffnen:
         Tabelle.setRowFactory(param -> {
-            TableRow<BezirkDaten> Spalte = new TableRow<>();
+            TableRow<PersonenDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
@@ -100,16 +124,28 @@ public class BezirkAnsichtManager {
         return Tabelle;
     }
 
-    private void erzeugeDetailAnsicht(BezirkDaten SpaltenDaten) {
-        Label LabelA = new Label("BezirksID");
-        Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getBezirksID()));
+    private void erzeugeDetailAnsicht(PersonenDaten SpaltenDaten) {
+        Label LabelA = new Label("PersonenID");
+        Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getPersonenID()));
 
         Label LabelB = new Label("Name");
         Label LabelBWert = new Label(SpaltenDaten.getName());
 
+        Label LabelC = new Label("Geburtsdatum");
+        Label LabelCWert = new Label(SpaltenDaten.getGebDatum());
+
+        Label LabelD = new Label("Nationalität");
+        Label LabelDWert = new Label(SpaltenDaten.getNation());
+
+        Label LabelE = new Label("Geschlecht");
+        Label LabelEWert = new Label(SpaltenDaten.getGeschlecht());
+
+        Label LabelF = new Label("Todesdatum");
+        Label LabelFWert = new Label(SpaltenDaten.getTodDatum());
+
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
+        Button ButtonSuchePersonensId = new Button("Suche nach Vorkommen von PersonenID");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -136,15 +172,15 @@ public class BezirkAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSuchePersonensId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
         GridPane Oben = new GridPane();
         Oben.setHgap(10);
         Oben.setVgap(10);
-        Oben.addColumn(0, LabelA, LabelB);
-        Oben.addColumn(1, LabelAWert, LabelBWert);
+        Oben.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF);
+        Oben.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
         Oben.getColumnConstraints().add(new ColumnConstraints(100));
         Oben.getColumnConstraints().add(new ColumnConstraints(200));
 
@@ -155,7 +191,7 @@ public class BezirkAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10,20,10,10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePersonensId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -168,13 +204,18 @@ public class BezirkAnsichtManager {
     /**
      * Aktualisiert die JavaFX vorliegenden Daten mit Daten aus der Datenbank.
      */
-    public void refreshBezirkAnsicht() {
-        BezirkDatenListe.clear();
+    public void refreshPersonenAnsicht() {
+        PersonenDatenListe.clear();
         ResultSet AnfrageAntwort;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM BEZIRK");
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM PERSON");
             while (AnfrageAntwort.next()) {
-                BezirkDatenListe.add(new BezirkDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2)));
+                String Todesdatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    Todesdatum = AnfrageAntwort.getString(6);
+                }
+                PersonenDatenListe.add(new PersonenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), Todesdatum));
             }
         } catch (SQLException e) {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
@@ -195,6 +236,21 @@ public class BezirkAnsichtManager {
         Label LabelB = new Label("Name");
         TextField LabelBWert = new TextField();
 
+        Label LabelC = new Label("Geburtsdatum");
+        TextField LabelCWert = new TextField();
+
+        Label LabelD = new Label("Nationalität");
+        TextField LabelDWert = new TextField();
+
+        Label LabelE = new Label("Geschlecht");
+        ComboBox LabelEWert = new ComboBox();
+
+        Label LabelF = new Label("Todesdatum");
+        TextField LabelFWert = new TextField();
+
+        LabelEWert.getItems().addAll("m", "w");
+        LabelEWert.setValue("m");
+
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
 
@@ -204,8 +260,8 @@ public class BezirkAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelB);
-        Gitter.addColumn(1, LabelBWert);
+        Gitter.addColumn(0, LabelB, LabelC, LabelD, LabelE, LabelF);
+        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -222,16 +278,27 @@ public class BezirkAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "INSERT INTO Bezirk (Name) VALUES (?)";
+            String SQLString;
+            if (LabelFWert.getText().isEmpty()) {
+                SQLString = "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht, Todesdatum) VALUES (?, ?, ?, ?, ?)";
+            } else {
+                SQLString= "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht) VALUES (?, ?, ?, ?)";
+            }
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, LabelBWert.getText());
+                InsertStatement.setString(2, LabelCWert.getText());
+                InsertStatement.setString(3, LabelDWert.getText());
+                InsertStatement.setString(4, LabelEWert.getValue().toString());
+                if (!LabelFWert.getText().isEmpty()) {
+                    InsertStatement.setString(5, LabelFWert.getText());
+                }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Einfügen Fehlgeschlagen", e);
             }
-            refreshBezirkAnsicht();
+            refreshPersonenAnsicht();
             PopUp.close();
         });
 
@@ -240,18 +307,18 @@ public class BezirkAnsichtManager {
     }
 
     private void updateSelectedEntry() {
-        ObservableList<BezirkDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<PersonenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.size() != 1) {
             IM.setErrorText("Es muss genau ein Element ausgewählt werden");
             return;
         }
-        BezirkDaten Auswahl = Nutzerauswahl.get(0);
+        PersonenDaten Auswahl = Nutzerauswahl.get(0);
 
         // Jetzt erzeugen wir ein PopUp zum veraendern des Eintrags
 
         Stage PopUp = new Stage();
         PopUp.initModality(Modality.APPLICATION_MODAL);
-        PopUp.setTitle("Eintrag ändern");
+        PopUp.setTitle("Neuer Eintrag");
         PopUp.setAlwaysOnTop(true);
         PopUp.setResizable(false);
 
@@ -259,13 +326,31 @@ public class BezirkAnsichtManager {
         Gitter.setHgap(10);
         Gitter.setVgap(10);
 
-        Label LabelA = new Label("BezirksID");
-        Label LabelAWert = new Label(Integer.toString(Auswahl.getBezirksID()));
+        Label LabelA = new Label("PersonenID");
+        Label LabelAWert = new Label(Integer.toString(Auswahl.getPersonenID()));
 
         Label LabelB = new Label("Name");
         TextField LabelBWert = new TextField();
 
+        Label LabelC = new Label("Geburtsdatum");
+        TextField LabelCWert = new TextField();
+
+        Label LabelD = new Label("Nationalität");
+        TextField LabelDWert = new TextField();
+
+        Label LabelE = new Label("Geschlecht");
+        ComboBox LabelEWert = new ComboBox();
+
+        Label LabelF = new Label("Todesdatum");
+        TextField LabelFWert = new TextField();
+
+        LabelEWert.getItems().addAll("m", "w");
+        LabelEWert.setValue(Auswahl.getGeschlecht());
+
         LabelBWert.setText(Auswahl.getName());
+        LabelCWert.setText(Auswahl.getGebDatum());
+        LabelDWert.setText(Auswahl.getNation());
+        LabelF.setText(Auswahl.getTodDatum());
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -276,8 +361,8 @@ public class BezirkAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelA, LabelB);
-        Gitter.addColumn(1, LabelAWert, LabelBWert);
+        Gitter.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF);
+        Gitter.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -294,16 +379,27 @@ public class BezirkAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE Bezirk SET Name=? WHERE BezirksID = " + Auswahl.getBezirksID();
+            String SQLString;
+            if (LabelFWert.getText().isEmpty()) {
+                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=? WHERE PersonenID = " + Auswahl.getPersonenID();
+            } else {
+                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=? WHERE PersonenID = " + Auswahl.getPersonenID();
+            }
             try {
-                PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
-                SQLInjektionNeinNein.setString(1, LabelBWert.getText());
-                SQLInjektionNeinNein.executeUpdate();
+                PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
+                InsertStatement.setString(1, LabelBWert.getText());
+                InsertStatement.setString(2, LabelCWert.getText());
+                InsertStatement.setString(3, LabelDWert.getText());
+                InsertStatement.setString(4, LabelEWert.getValue().toString());
+                if (!LabelFWert.getText().isEmpty()) {
+                    InsertStatement.setString(5, LabelFWert.getText());
+                }
+                InsertStatement.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Ändern Fehlgeschlagen", e);
             }
-            refreshBezirkAnsicht();
+            refreshPersonenAnsicht();
             PopUp.close();
         });
 
@@ -312,19 +408,19 @@ public class BezirkAnsichtManager {
     }
 
     private void deleteSelectedEntrys() {
-        ObservableList<BezirkDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<PersonenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.isEmpty()) {
             IM.setErrorText("Es muss mindestens ein Eintrag ausgewählt sein");
             return;
         }
 
-        Nutzerauswahl.forEach(BezirkDaten -> {
+        Nutzerauswahl.forEach(PersonenDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Bezirk WHERE BezirksID = "+ BezirkDaten.getBezirksID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM PERSON WHERE PersonensID = "+ PersonenDaten.getPersonenID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }
         });
-        refreshBezirkAnsicht();
+        refreshPersonenAnsicht();
     }
 }
