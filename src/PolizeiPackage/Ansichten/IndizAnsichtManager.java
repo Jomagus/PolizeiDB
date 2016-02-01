@@ -418,7 +418,8 @@ public class IndizAnsichtManager {
         Button ButtonImage = new Button("Bild auswählen...");
 
         ButtonImage.setMaxWidth(Double.MAX_VALUE);
-        ButtonImage.setOnAction(event -> HandleBildLaden(PopUp));   //TODO ACHTEN OB NEUES BILD GELADEN ODER NICHT, NUR FALLS JA NEU SETZEN
+        Bild = null;
+        ButtonImage.setOnAction(event -> HandleBildLaden(PopUp));
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -501,17 +502,27 @@ public class IndizAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE Indiz SET Datum=?, Text=?, angelegt_von_PersonenID=?, angelegt_zu_FallID=?  WHERE IndizID = " + Auswahl.getIndizID();
+            String SQLString;
+            if (Bild == null) {
+                SQLString = "UPDATE Indiz SET Datum=?, Text=?, angelegt_von_PersonenID=?, angelegt_zu_FallID=?  WHERE IndizID = " + Auswahl.getIndizID();
+            } else {
+                SQLString = "UPDATE Indiz SET Datum=?, Text=?, angelegt_von_PersonenID=?, angelegt_zu_FallID=?, Bild=?  WHERE IndizID = " + Auswahl.getIndizID();
+            }
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, LabelBWert.getValue().toString());    //TODO exception abfangen
                 SQLInjektionNeinNein.setString(2, LabelCWert.getText());
                 SQLInjektionNeinNein.setInt(3, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(4, Integer.parseInt(LabelGWert.getText()));
+                if (Bild != null) {
+                    SQLInjektionNeinNein.setBytes(5, Files.readAllBytes(Bild.toPath()));
+                }
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 IM.setErrorText("Ändern Fehlgeschlagen", e);
+            } finally {
+                Bild = null;
             }
             refreshIndizAnsicht();
             PopUp.close();
@@ -538,6 +549,11 @@ public class IndizAnsichtManager {
         refreshIndizAnsicht();
     }
 
+    /**
+     * Zeigt einen FileCHooser an fuer das laden von Bildern. Setzt globale Variable File Bild null, falls keine Auswahl.
+     *
+     * @param Aufrufer Aufruferstage die geblockt wird
+     */
     private void HandleBildLaden(Stage Aufrufer) {
         FileChooser BildAuswaehler = new FileChooser();
         Bild = BildAuswaehler.showOpenDialog(Aufrufer);
@@ -548,7 +564,19 @@ public class IndizAnsichtManager {
         Stage PopUp = new Stage();
         PopUp.initModality(Modality.APPLICATION_MODAL);
         PopUp.setTitle("Indiz");
-        PopUp.setScene(new Scene(new BorderPane(new ImageView(GeladenesBild))));
+
+        ImageView Innen = new ImageView(GeladenesBild);
+
+        ScrollPane Aussen = new ScrollPane();
+        Aussen.setContent(Innen);
+
+        Aussen.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                PopUp.close();
+            }
+        });
+
+        PopUp.setScene(new Scene(Aussen));
         PopUp.showAndWait();
     }
 }
