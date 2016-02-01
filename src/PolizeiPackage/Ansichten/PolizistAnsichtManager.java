@@ -20,34 +20,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Liefert Tabelle fuer die Art
+ * Liefert Tabelle fuer die Polizisten
  */
-public class PersonenAnsichtManager {
+public class PolizistAnsichtManager {
 
     private DatenbankHandler DH;
     private InfoErrorManager IM;
     private Main Hauptprogramm;
-    private TableView<PersonenDaten> Tabelle;
+    private TableView<PolizistDaten> Tabelle;
     private BorderPane DatenAnsicht;
-    private ObservableList<PersonenDaten> PersonenDatenListe;
-    private boolean PersonenAnsichtGeneriert;
+    private ObservableList<PolizistDaten> PolizistDatenListe;
+    private boolean PolizistAnsichtGeneriert;
 
-    public PersonenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
+    public PolizistAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
         Hauptprogramm = HauptFenster;
-        PersonenDatenListe = FXCollections.observableArrayList();
+        PolizistDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
-        PersonenAnsichtGeneriert = false;
+        PolizistAnsichtGeneriert = false;
     }
 
-    public Node getPersonenAnsicht() {
-        if (PersonenAnsichtGeneriert) {
-            refreshPersonenAnsicht();
+    public Node getPolizistAnsicht() {
+        if (PolizistAnsichtGeneriert) {
+            refreshPolizistAnsicht();
             return DatenAnsicht;
         }
-        IM.setInfoText("Lade Personen Ansicht");
-        DatenAnsicht = new BorderPane(getPersonenAnsichtInnereTabelle());
+        IM.setInfoText("Lade Polizist Ansicht");
+        DatenAnsicht = new BorderPane(getPolizistAnsichtInnereTabelle());
 
         HBox ButtonLeiste = new HBox(10);
         ButtonLeiste.setPadding(new Insets(10));
@@ -63,56 +63,62 @@ public class PersonenAnsichtManager {
         ButtonLeiste.getChildren().addAll(ButtonNeue, ButtonChan, ButtonDele);
         DatenAnsicht.setBottom(ButtonLeiste);
 
-        IM.setInfoText("Laden der Personen Ansicht erfolgreich");
-        PersonenAnsichtGeneriert = true;
+        IM.setInfoText("Laden der Polizist Ansicht erfolgreich");
+        PolizistAnsichtGeneriert = true;
         return DatenAnsicht;
     }
 
     /**
      * Erzeugt eine TableView mit den Daten aus der Datenbank.
      *
-     * @return Eine TableView mit Personen Daten
+     * @return Eine TableView mit Polizist Daten
      */
-    private Node getPersonenAnsichtInnereTabelle() {
-        refreshPersonenAnsicht();
+    private Node getPolizistAnsichtInnereTabelle() {
+        refreshPolizistAnsicht();
 
         // Name Spalte
-        TableColumn<PersonenDaten, String> SpalteName = new TableColumn<>("Name");
+        TableColumn<PolizistDaten, String> SpalteName = new TableColumn<>("Name");
         SpalteName.setMinWidth(200);
         SpalteName.setCellValueFactory(new PropertyValueFactory<>("Name"));
 
         // GebDatum Spalte
-        TableColumn<PersonenDaten, String> SpalteDatum = new TableColumn<>("Geburtsdatum");
+        TableColumn<PolizistDaten, String> SpalteDatum = new TableColumn<>("Geburtsdatum");
         SpalteDatum.setMinWidth(200);
         SpalteDatum.setCellValueFactory(new PropertyValueFactory<>("GebDatum"));
 
-        // Bezirk Spalte
-        TableColumn<PersonenDaten, String> SpalteNation = new TableColumn<>("Nationalität");
+        // Nationalitaet Spalte
+        TableColumn<PolizistDaten, String> SpalteNation = new TableColumn<>("Nationalität");
         SpalteNation.setMinWidth(200);
         SpalteNation.setCellValueFactory(new PropertyValueFactory<>("Nation"));
 
-        // Fall Spalte
-        TableColumn<PersonenDaten, String> SpalteGeschlecht = new TableColumn<>("Geschlecht");
+        // Geschlecht Spalte
+        TableColumn<PolizistDaten, String> SpalteGeschlecht = new TableColumn<>("Geschlecht");
         SpalteGeschlecht.setMinWidth(200);
         SpalteGeschlecht.setCellValueFactory(new PropertyValueFactory<>("Geschlecht"));
 
-        // Art Spalte
-        TableColumn<PersonenDaten, String> SpalteTod = new TableColumn<>("Todesdatum");
+        // Todesdatum Spalte
+        TableColumn<PolizistDaten, String> SpalteTod = new TableColumn<>("Todesdatum");
         SpalteTod.setMinWidth(200);
         SpalteTod.setCellValueFactory(new PropertyValueFactory<>("TodDatum"));
 
-        Tabelle.setItems(PersonenDatenListe);
+        // Dienstgrad Spalte
+        TableColumn<PolizistDaten, String> SpalteGrad = new TableColumn<>("Dienstgrad");
+        SpalteGrad.setMinWidth(200);
+        SpalteGrad.setCellValueFactory(new PropertyValueFactory<>("Dienstgrad"));
+
+        Tabelle.setItems(PolizistDatenListe);
         Tabelle.getColumns().add(SpalteName);
         Tabelle.getColumns().add(SpalteDatum);
         Tabelle.getColumns().add(SpalteNation);
         Tabelle.getColumns().add(SpalteGeschlecht);
         Tabelle.getColumns().add(SpalteTod);
+        Tabelle.getColumns().add(SpalteGrad);
 
         Tabelle.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Doppelklicke auf Spalten sollen Detailansichten oeffnen:
         Tabelle.setRowFactory(param -> {
-            TableRow<PersonenDaten> Spalte = new TableRow<>();
+            TableRow<PolizistDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
@@ -124,7 +130,7 @@ public class PersonenAnsichtManager {
         return Tabelle;
     }
 
-    private void erzeugeDetailAnsicht(PersonenDaten SpaltenDaten) {
+    private void erzeugeDetailAnsicht(PolizistDaten SpaltenDaten) {
         Label LabelA = new Label("PersonenID");
         Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getPersonenID()));
 
@@ -143,12 +149,14 @@ public class PersonenAnsichtManager {
         Label LabelF = new Label("Todesdatum");
         Label LabelFWert = new Label(SpaltenDaten.getTodDatum());
 
+        Label LabelG = new Label("Dienstgrad");
+        Label LabelGWert = new Label(SpaltenDaten.getDienstgrad());
+
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSuchePersonensId = new Button("Suche nach Vorkommen von PersonenID");
+        Button ButtonSuchePolizistsId = new Button("Suche nach Vorkommen von PersonenID");
+        //TODO suchen nach Notizen, etc. alles ueber getrennte Buttons
         Button ButtonClose = new Button("Detailansicht verlassen");
-
-        //TODO einen zum Polizisten mach knopf einfuegen
 
         ButtonBearbeiten.setOnAction(event -> {
             Tabelle.getSelectionModel().clearSelection();
@@ -174,15 +182,15 @@ public class PersonenAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSuchePersonensId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSuchePolizistsId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
         GridPane Oben = new GridPane();
         Oben.setHgap(10);
         Oben.setVgap(10);
-        Oben.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF);
-        Oben.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
+        Oben.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG);
+        Oben.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
         Oben.getColumnConstraints().add(new ColumnConstraints(100));
         Oben.getColumnConstraints().add(new ColumnConstraints(200));
 
@@ -193,7 +201,7 @@ public class PersonenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10,20,10,10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePersonensId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePolizistsId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -206,18 +214,18 @@ public class PersonenAnsichtManager {
     /**
      * Aktualisiert die JavaFX vorliegenden Daten mit Daten aus der Datenbank.
      */
-    public void refreshPersonenAnsicht() {
-        PersonenDatenListe.clear();
+    public void refreshPolizistAnsicht() {
+        PolizistDatenListe.clear();
         ResultSet AnfrageAntwort;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM PERSON");
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT PERSON.PersonenID, PERSON.Name, PERSON.Geburtsdatum, PERSON.Nationalität, PERSON.Geschlecht, PERSON.Todesdatum, POLIZIST.Dienstgrad FROM PERSON, POLIZIST WHERE PERSON.PersonenID = POLIZIST.PersonenID;");
             while (AnfrageAntwort.next()) {
                 String Todesdatum = "";
                 if (AnfrageAntwort.getObject(6) != null) {
                     Todesdatum = AnfrageAntwort.getString(6);
                 }
-                PersonenDatenListe.add(new PersonenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
-                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), Todesdatum));
+                PolizistDatenListe.add(new PolizistDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), Todesdatum, AnfrageAntwort.getString(7)));
             }
         } catch (SQLException e) {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
@@ -250,6 +258,9 @@ public class PersonenAnsichtManager {
         Label LabelF = new Label("Todesdatum");
         TextField LabelFWert = new TextField();
 
+        Label LabelG = new Label("Dienstgrad");
+        TextField LabelGWert = new TextField();
+
         LabelEWert.getItems().addAll("m", "w");
         LabelEWert.setValue("m");
 
@@ -262,8 +273,8 @@ public class PersonenAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelB, LabelC, LabelD, LabelE, LabelF);
-        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
+        Gitter.addColumn(0, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG);
+        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -296,11 +307,20 @@ public class PersonenAnsichtManager {
                     InsertStatement.setString(5, LabelFWert.getText());
                 }
                 InsertStatement.executeUpdate();
+                ResultSet PersID = DH.getAnfrageObjekt().executeQuery("SELECT last_insert_rowid();");
+                if (!PersID.next()) {
+                    IM.setErrorText("Konnte Primärschlüssel nicht mehr bestimmen.");
+                }
+                SQLString = "INSERT INTO POLIZIST (PersonenID, Dienstgrad) VALUES (?, ?)";
+                InsertStatement = DH.prepareStatement(SQLString);
+                InsertStatement.setInt(1, PersID.getInt(1));    //TODO das hier verifizieren
+                InsertStatement.setString(2, LabelGWert.getText());
+                InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Einfügen Fehlgeschlagen", e);
             }
-            refreshPersonenAnsicht();
+            refreshPolizistAnsicht();
             PopUp.close();
         });
 
@@ -309,12 +329,12 @@ public class PersonenAnsichtManager {
     }
 
     private void updateSelectedEntry() {
-        ObservableList<PersonenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<PolizistDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.size() != 1) {
             IM.setErrorText("Es muss genau ein Element ausgewählt werden");
             return;
         }
-        PersonenDaten Auswahl = Nutzerauswahl.get(0);
+        PolizistDaten Auswahl = Nutzerauswahl.get(0);
 
         // Jetzt erzeugen wir ein PopUp zum veraendern des Eintrags
 
@@ -346,6 +366,9 @@ public class PersonenAnsichtManager {
         Label LabelF = new Label("Todesdatum");
         TextField LabelFWert = new TextField();
 
+        Label LabelG = new Label("Dienstgrad");
+        TextField LabelGWert = new TextField();
+
         LabelEWert.getItems().addAll("m", "w");
         LabelEWert.setValue(Auswahl.getGeschlecht());
 
@@ -353,6 +376,7 @@ public class PersonenAnsichtManager {
         LabelCWert.setText(Auswahl.getGebDatum());
         LabelDWert.setText(Auswahl.getNation());
         LabelF.setText(Auswahl.getTodDatum());
+        LabelGWert.setText(Auswahl.getDienstgrad());
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -363,8 +387,8 @@ public class PersonenAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF);
-        Gitter.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert);
+        Gitter.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG);
+        Gitter.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -397,11 +421,15 @@ public class PersonenAnsichtManager {
                     InsertStatement.setString(5, LabelFWert.getText());
                 }
                 InsertStatement.executeUpdate();
+                SQLString = "UPDATE POLIZIST SET Dienstgrad = ? WHERE PersonenID = " + Auswahl.getPersonenID();
+                InsertStatement = DH.prepareStatement(SQLString);
+                InsertStatement.setString(1, LabelGWert.getText());
+                InsertStatement.execute();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (SQLException e) {
                 IM.setErrorText("Ändern Fehlgeschlagen", e);
             }
-            refreshPersonenAnsicht();
+            refreshPolizistAnsicht();
             PopUp.close();
         });
 
@@ -410,19 +438,19 @@ public class PersonenAnsichtManager {
     }
 
     private void deleteSelectedEntrys() {
-        ObservableList<PersonenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<PolizistDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.isEmpty()) {
             IM.setErrorText("Es muss mindestens ein Eintrag ausgewählt sein");
             return;
         }
 
-        Nutzerauswahl.forEach(PersonenDaten -> {
+        Nutzerauswahl.forEach(PolizistDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM PERSON WHERE PersonenID = "+ PersonenDaten.getPersonenID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM POLIZIST WHERE PersonenID = "+ PolizistDaten.getPersonenID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }
         });
-        refreshPersonenAnsicht();
+        refreshPolizistAnsicht();
     }
 }

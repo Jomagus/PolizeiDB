@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.sqlite.core.DB;
 
+import java.sql.SQLException;
+
 /**
  * Hauptklasse und Startpunkt
  */
@@ -28,6 +30,7 @@ public class Main extends Application {
     BezirkAnsichtManager BezirkAM;
     BehoerdenAnsichtManager BehAM;
     PersonenAnsichtManager PersonenAM;
+    PolizistAnsichtManager PolizistAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -45,6 +48,7 @@ public class Main extends Application {
         BezirkAM = new BezirkAnsichtManager(DBH, IEM, this);
         BehAM = new BehoerdenAnsichtManager(DBH, IEM, this);
         PersonenAM = new PersonenAnsichtManager(DBH, IEM, this);
+        PolizistAM = new PolizistAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -106,7 +110,17 @@ public class Main extends Application {
 
         // Das Hilfe Menue
         Menu HilfeMenue = new Menu("_Hilfe");
+        MenuItem ItemDBVacuum = new MenuItem("Datenbank optimieren");
         MenuItem ItemDBRebuild = new MenuItem("Datenbank neu erstellen");
+
+        ItemDBVacuum.setOnAction(event -> {
+            try {
+                DBH.getAnfrageObjekt().execute("VACUUM ;");
+                IEM.setInfoText("Datenbank optimiert");
+            } catch (SQLException e) {
+                IEM.setErrorText("Unbekannter Fehler beim optimieren der Datenbank", e);
+            }
+        });
 
         ItemDBRebuild.setOnAction(event -> {
             boolean DBRebuildBestaetigung = BestaetigungsBox.ErstellePopUp("Bestätigung", "Sind sie sicher? Alle vorhandenen Daten\nwerden dabei gelöscht werden!");
@@ -118,6 +132,7 @@ public class Main extends Application {
             }
         });
 
+        HilfeMenue.getItems().add(ItemDBVacuum);
         HilfeMenue.getItems().add(ItemDBRebuild);
 
         // Wir fuegen alle in die Hauptleiste ein
@@ -177,7 +192,7 @@ public class Main extends Application {
         Bezirke.setOnAction(event -> PrimaeresLayout.setCenter(BezirkAM.getBezirkAnsicht()));
         Behoerden.setOnAction(event -> PrimaeresLayout.setCenter(BehAM.getBehoerdenAnsicht()));
         Personen.setOnAction(event -> PrimaeresLayout.setCenter(PersonenAM.getPersonenAnsicht()));
-        Polizisten.setOnAction(event -> {});
+        Polizisten.setOnAction(event -> PrimaeresLayout.setCenter(PolizistAM.getPolizistAnsicht()));
         Notizen.setOnAction(event -> {});
         Indizien.setOnAction(event -> {});
         Opfer.setOnAction(event -> {});
