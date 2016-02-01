@@ -14,11 +14,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Struct;
+import java.text.DateFormat;
+import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -224,8 +227,26 @@ public class FallAnsichtManager {
         Label LabelB = new Label("Enddatum");
 
         TextField TextFeldName = new TextField();
-        TextField TextFeldA = new TextField();
-        TextField TextFeldB = new TextField();
+        DatePicker TextFeldA = new DatePicker();
+        DatePicker TextFeldB = new DatePicker();
+
+        final Callback<DatePicker, DateCell> TagesZellenFabtrik = new Callback<DatePicker, DateCell>() {
+            @Override
+            public DateCell call(final DatePicker DP) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item.isBefore(TextFeldA.getValue().plusDays(1))) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+                        }
+                    }
+                };
+            }
+        };
+        TextFeldB.setDayCellFactory(TagesZellenFabtrik);
 
         Button ButtonFort = new Button("Hinzufügen");
         Button ButtonAbb = new Button("Abbrechen");
@@ -255,17 +276,17 @@ public class FallAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (TextFeldB.getText().isEmpty()) {
-                SQLString = "INSERT INTO ART (Name, Eröffnungsdatum) VALUES (?, ?)";
+            if (TextFeldB.getValue() == null) {
+                SQLString = "INSERT INTO FALL (Name, Eröffnungsdatum) VALUES (?, ?)";
             } else {
-                SQLString = "INSERT INTO ART (Name, Eröffnungsdatum, Enddatum) VALUES (?, ?, ?)";
+                SQLString = "INSERT INTO FALL (Name, Eröffnungsdatum, Enddatum) VALUES (?, ?, ?)";
             }
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, TextFeldName.getText());
-                InsertStatement.setString(2, TextFeldA.getText());
-                if (!TextFeldB.getText().isEmpty()) {
-                    InsertStatement.setString(3, TextFeldB.getText());
+                InsertStatement.setString(2, TextFeldA.getValue().toString());
+                if (TextFeldB.getValue() != null) {
+                    InsertStatement.setString(3, TextFeldB.getValue().toString());
                 }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
@@ -306,15 +327,35 @@ public class FallAnsichtManager {
         Label LabelName = new Label("Name");
         TextField TextFeldName = new TextField();
 
-        Label LabelDatumA = new Label("Beschreibung");
-        TextField TextFeldA = new TextField();
+        Label LabelDatumA = new Label("Eröffnungsdatum");
+        DatePicker TextFeldA = new DatePicker();
 
-        Label LabelDatumB = new Label("Beschreibung");
-        TextField TextFeldB = new TextField();
+        Label LabelDatumB = new Label("Enddatum");
+        DatePicker TextFeldB = new DatePicker();
+
+        final Callback<DatePicker, DateCell> TagesZellenFabtrik = new Callback<DatePicker, DateCell>() {
+            @Override
+            public DateCell call(final DatePicker DP) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item.isBefore(TextFeldA.getValue().plusDays(1))) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+                        }
+                    }
+                };
+            }
+        };
+        TextFeldB.setDayCellFactory(TagesZellenFabtrik);
 
         TextFeldName.setText(Auswahl.getName());
-        TextFeldA.setText(Auswahl.getEroeffnungsdatum());
-        TextFeldB.setText(Auswahl.getEnddatum());
+        TextFeldA.setValue(LocalDate.parse(Auswahl.getEroeffnungsdatum()));
+        if (!Auswahl.getEnddatum().isEmpty()) {
+            TextFeldB.setValue(LocalDate.parse(Auswahl.getEnddatum()));
+        }
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -344,7 +385,7 @@ public class FallAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (TextFeldB.getText().isEmpty()) {
+            if (TextFeldB.getValue() == null) {
                 SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=? WHERE FallID = " + Auswahl.getFallID();
             } else {
                 SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=? WHERE FallID = " + Auswahl.getFallID();
@@ -352,9 +393,9 @@ public class FallAnsichtManager {
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, TextFeldName.getText());
-                SQLInjektionNeinNein.setString(2, TextFeldA.getText());
-                if (!TextFeldB.getText().isEmpty()) {
-                    SQLInjektionNeinNein.setString(3, TextFeldB.getText());
+                SQLInjektionNeinNein.setString(2, TextFeldA.getValue().toString());
+                if (TextFeldB.getValue() != null) {
+                    SQLInjektionNeinNein.setString(3, TextFeldB.getValue().toString());
                 }
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");

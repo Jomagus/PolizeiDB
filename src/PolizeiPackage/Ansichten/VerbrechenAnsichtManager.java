@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -253,7 +254,7 @@ public class VerbrechenAnsichtManager {
         TextField LabelBWert = new TextField();
 
         Label LabelC = new Label("Datum");
-        TextField LabelCWert = new TextField();
+        DatePicker LabelCWert = new DatePicker();
 
         Label LabelD = new Label("Bezirk");
         Label LabelDWert = new Label();
@@ -355,7 +356,7 @@ public class VerbrechenAnsichtManager {
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, LabelBWert.getText());
-                InsertStatement.setString(2, LabelCWert.getText());
+                InsertStatement.setString(2, LabelCWert.getValue().toString()); //TODO hier vorther nullpointer pruefen oder abfangen
                 InsertStatement.setString(3, LabelEWert.getText());
                 InsertStatement.setString(4, LabelGWert.getText());
                 InsertStatement.setString(5, LabelIWert.getText());
@@ -399,7 +400,7 @@ public class VerbrechenAnsichtManager {
         TextField LabelBWert = new TextField();
 
         Label LabelC = new Label("Datum");
-        TextField LabelCWert = new TextField();
+        DatePicker LabelCWert = new DatePicker();
 
         Label LabelD = new Label("Bezirk");
         Label LabelDWert = new Label(Auswahl.getBezirkName());
@@ -471,7 +472,7 @@ public class VerbrechenAnsichtManager {
         }));
 
         LabelBWert.setText(Auswahl.getArtName());
-        LabelCWert.setText(Auswahl.getDatum());
+        LabelCWert.setValue(LocalDate.parse(Auswahl.getDatum()));       //TODO exception fangen
         LabelEWert.setText(Integer.toString(Auswahl.getBezirksID()));
         LabelGWert.setText(Integer.toString(Auswahl.getFallID()));
         LabelIWert.setText(Integer.toString(Auswahl.getArtID()));
@@ -507,7 +508,7 @@ public class VerbrechenAnsichtManager {
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, LabelBWert.getText());
-                SQLInjektionNeinNein.setString(2, LabelCWert.getText());
+                SQLInjektionNeinNein.setString(2, LabelCWert.getValue().toString());
                 SQLInjektionNeinNein.setInt(3, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(4, Integer.parseInt(LabelGWert.getText()));
                 SQLInjektionNeinNein.setInt(5, Integer.parseInt(LabelIWert.getText()));

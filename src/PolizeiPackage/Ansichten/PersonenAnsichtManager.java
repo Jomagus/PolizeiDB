@@ -14,10 +14,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
+import javax.swing.text.html.HTML;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -239,7 +242,7 @@ public class PersonenAnsichtManager {
         TextField LabelBWert = new TextField();
 
         Label LabelC = new Label("Geburtsdatum");
-        TextField LabelCWert = new TextField();
+        DatePicker LabelCWert = new DatePicker();
 
         Label LabelD = new Label("Nationalität");
         TextField LabelDWert = new TextField();
@@ -248,7 +251,28 @@ public class PersonenAnsichtManager {
         ComboBox LabelEWert = new ComboBox();
 
         Label LabelF = new Label("Todesdatum");
-        TextField LabelFWert = new TextField();
+        DatePicker LabelFWert = new DatePicker();
+
+        // wir erlauben nicht ein Todesdatum vor dem Geburtsdatum
+        // nach https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/date-picker.htm
+
+        final Callback<DatePicker, DateCell> TagesZellenFabtrik = new Callback<DatePicker, DateCell>() {
+            @Override
+            public DateCell call(final DatePicker DP) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item.isBefore(LabelCWert.getValue().plusDays(1))) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+                        }
+                    }
+                };
+            }
+        };
+        LabelFWert.setDayCellFactory(TagesZellenFabtrik);
 
         LabelEWert.getItems().addAll("m", "w");
         LabelEWert.setValue("m");
@@ -281,7 +305,7 @@ public class PersonenAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (LabelFWert.getText().isEmpty()) {
+            if (LabelFWert.getValue() != null) {
                 SQLString = "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht, Todesdatum) VALUES (?, ?, ?, ?, ?)";
             } else {
                 SQLString= "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht) VALUES (?, ?, ?, ?)";
@@ -289,11 +313,11 @@ public class PersonenAnsichtManager {
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, LabelBWert.getText());
-                InsertStatement.setString(2, LabelCWert.getText());
+                InsertStatement.setString(2, LabelCWert.getValue().toString()); //TODO exception
                 InsertStatement.setString(3, LabelDWert.getText());
                 InsertStatement.setString(4, LabelEWert.getValue().toString());
-                if (!LabelFWert.getText().isEmpty()) {
-                    InsertStatement.setString(5, LabelFWert.getText());
+                if (LabelFWert.getValue() != null) {
+                    InsertStatement.setString(5, LabelFWert.getValue().toString());     //TODO exception
                 }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
@@ -335,7 +359,7 @@ public class PersonenAnsichtManager {
         TextField LabelBWert = new TextField();
 
         Label LabelC = new Label("Geburtsdatum");
-        TextField LabelCWert = new TextField();
+        DatePicker LabelCWert = new DatePicker();
 
         Label LabelD = new Label("Nationalität");
         TextField LabelDWert = new TextField();
@@ -344,15 +368,35 @@ public class PersonenAnsichtManager {
         ComboBox LabelEWert = new ComboBox();
 
         Label LabelF = new Label("Todesdatum");
-        TextField LabelFWert = new TextField();
+        DatePicker LabelFWert = new DatePicker();
 
         LabelEWert.getItems().addAll("m", "w");
         LabelEWert.setValue(Auswahl.getGeschlecht());
 
+        final Callback<DatePicker, DateCell> TagesZellenFabtrik = new Callback<DatePicker, DateCell>() {
+            @Override
+            public DateCell call(final DatePicker DP) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item.isBefore(LabelCWert.getValue().plusDays(1))) {
+                            setDisable(true);
+                            setStyle("-fx-background-color: #ffc0cb;");
+                        }
+                    }
+                };
+            }
+        };
+        LabelFWert.setDayCellFactory(TagesZellenFabtrik);
+
         LabelBWert.setText(Auswahl.getName());
-        LabelCWert.setText(Auswahl.getGebDatum());
+        LabelCWert.setValue(LocalDate.parse(Auswahl.getGebDatum()));    //TODO exception
         LabelDWert.setText(Auswahl.getNation());
-        LabelF.setText(Auswahl.getTodDatum());
+        if (!Auswahl.getTodDatum().isEmpty()) {
+            LabelFWert.setValue(LocalDate.parse(Auswahl.getTodDatum()));    //TODO exception
+        }
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -382,7 +426,7 @@ public class PersonenAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (LabelFWert.getText().isEmpty()) {
+            if (LabelFWert.getValue() == null) {
                 SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=? WHERE PersonenID = " + Auswahl.getPersonenID();
             } else {
                 SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=? WHERE PersonenID = " + Auswahl.getPersonenID();
@@ -390,11 +434,11 @@ public class PersonenAnsichtManager {
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, LabelBWert.getText());
-                InsertStatement.setString(2, LabelCWert.getText());
+                InsertStatement.setString(2, LabelCWert.getValue().toString()); //TODO exception
                 InsertStatement.setString(3, LabelDWert.getText());
                 InsertStatement.setString(4, LabelEWert.getValue().toString());
-                if (!LabelFWert.getText().isEmpty()) {
-                    InsertStatement.setString(5, LabelFWert.getText());
+                if (LabelFWert.getValue() != null) {
+                    InsertStatement.setString(5, LabelFWert.getValue().toString()); //TODO exception
                 }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");

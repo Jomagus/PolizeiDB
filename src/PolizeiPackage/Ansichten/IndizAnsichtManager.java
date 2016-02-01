@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -240,7 +241,7 @@ public class IndizAnsichtManager {
         Gitter.setVgap(10);
 
         Label LabelB = new Label("Datum");
-        TextField LabelBWert = new TextField();
+        DatePicker LabelBWert = new DatePicker();
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -321,7 +322,7 @@ public class IndizAnsichtManager {
             String SQLString = "INSERT INTO Indiz (Datum, Text, angelegt_von_PersonenID, angelegt_zu_FallID) VALUES (?, ?, ?, ?)";
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
-                InsertStatement.setString(1, LabelBWert.getText());
+                InsertStatement.setString(1, LabelBWert.getValue().toString()); //TODO nullpointer abfangen
                 InsertStatement.setString(2, LabelCWert.getText());
                 InsertStatement.setString(3, LabelEWert.getText());
                 InsertStatement.setString(4, LabelGWert.getText());
@@ -362,7 +363,7 @@ public class IndizAnsichtManager {
         Label LabelAWert = new Label(Integer.toString(Auswahl.getIndizID()));
 
         Label LabelB = new Label("Datum");
-        TextField LabelBWert = new TextField();
+        DatePicker LabelBWert = new DatePicker();
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -413,7 +414,7 @@ public class IndizAnsichtManager {
             }
         }));
 
-        LabelBWert.setText(Auswahl.getDatum());
+        LabelBWert.setValue(LocalDate.parse(Auswahl.getDatum()));   //TODO exception abfangen
         LabelCWert.setText(Auswahl.getText());
         LabelEWert.setText(Integer.toString(Auswahl.getPersonenID()));
         LabelGWert.setText(Integer.toString(Auswahl.getFallID()));
@@ -448,7 +449,7 @@ public class IndizAnsichtManager {
             String SQLString = "UPDATE Indiz SET Datum=?, Text=?, angelegt_von_PersonenID=?, angelegt_zu_FallID=?  WHERE IndizID = " + Auswahl.getIndizID();
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
-                SQLInjektionNeinNein.setString(1, LabelBWert.getText());
+                SQLInjektionNeinNein.setString(1, LabelBWert.getValue().toString());    //TODO exception abfangen
                 SQLInjektionNeinNein.setString(2, LabelCWert.getText());
                 SQLInjektionNeinNein.setInt(3, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(4, Integer.parseInt(LabelGWert.getText()));

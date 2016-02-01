@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -235,7 +236,7 @@ public class NotizAnsichtManager {
         Gitter.setVgap(10);
 
         Label LabelB = new Label("Datum");
-        TextField LabelBWert = new TextField();
+        DatePicker LabelBWert = new DatePicker();
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -316,7 +317,7 @@ public class NotizAnsichtManager {
             String SQLString = "INSERT INTO Notiz (Datum, Text, angelegt_von_PersonenID, angelegt_zu_FallID) VALUES (?, ?, ?, ?)";
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
-                InsertStatement.setString(1, LabelBWert.getText());
+                InsertStatement.setString(1, LabelBWert.getValue().toString()); //TODO exception
                 InsertStatement.setString(2, LabelCWert.getText());
                 InsertStatement.setString(3, LabelEWert.getText());
                 InsertStatement.setString(4, LabelGWert.getText());
@@ -357,7 +358,7 @@ public class NotizAnsichtManager {
         Label LabelAWert = new Label(Integer.toString(Auswahl.getNotizID()));
 
         Label LabelB = new Label("Datum");
-        TextField LabelBWert = new TextField();
+        DatePicker LabelBWert = new DatePicker();
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -408,7 +409,7 @@ public class NotizAnsichtManager {
             }
         }));
 
-        LabelBWert.setText(Auswahl.getDatum());
+        LabelBWert.setValue(LocalDate.parse(Auswahl.getDatum()));   //TODO exception
         LabelCWert.setText(Auswahl.getText());
         LabelEWert.setText(Integer.toString(Auswahl.getPersonenID()));
         LabelGWert.setText(Integer.toString(Auswahl.getFallID()));
@@ -443,7 +444,7 @@ public class NotizAnsichtManager {
             String SQLString = "UPDATE Notiz SET Datum=?, Text=?, angelegt_von_PersonenID=?, angelegt_zu_FallID=?  WHERE NotizID = " + Auswahl.getNotizID();
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
-                SQLInjektionNeinNein.setString(1, LabelBWert.getText());
+                SQLInjektionNeinNein.setString(1, LabelBWert.getValue().toString());    //TODO exception
                 SQLInjektionNeinNein.setString(2, LabelCWert.getText());
                 SQLInjektionNeinNein.setInt(3, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(4, Integer.parseInt(LabelGWert.getText()));
