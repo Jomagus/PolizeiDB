@@ -31,6 +31,8 @@ public class Main extends Application {
     BehoerdenAnsichtManager BehAM;
     PersonenAnsichtManager PersonenAM;
     PolizistAnsichtManager PolizistAM;
+    NotizAnsichtManager NotizAM;
+    IndizAnsichtManager IndizAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -49,6 +51,8 @@ public class Main extends Application {
         BehAM = new BehoerdenAnsichtManager(DBH, IEM, this);
         PersonenAM = new PersonenAnsichtManager(DBH, IEM, this);
         PolizistAM = new PolizistAnsichtManager(DBH, IEM, this);
+        NotizAM = new NotizAnsichtManager(DBH, IEM, this);
+        IndizAM = new IndizAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -193,8 +197,8 @@ public class Main extends Application {
         Behoerden.setOnAction(event -> PrimaeresLayout.setCenter(BehAM.getBehoerdenAnsicht()));
         Personen.setOnAction(event -> PrimaeresLayout.setCenter(PersonenAM.getPersonenAnsicht()));
         Polizisten.setOnAction(event -> PrimaeresLayout.setCenter(PolizistAM.getPolizistAnsicht()));
-        Notizen.setOnAction(event -> {});
-        Indizien.setOnAction(event -> {});
+        Notizen.setOnAction(event -> PrimaeresLayout.setCenter(NotizAM.getNotizAnsicht()));
+        Indizien.setOnAction(event -> PrimaeresLayout.setCenter(IndizAM.getIndizAnsicht()));
         Opfer.setOnAction(event -> {});
         Verdaechtige.setOnAction(event -> {});
         Arbeiten.setOnAction(event -> {});

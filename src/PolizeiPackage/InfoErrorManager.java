@@ -62,6 +62,7 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
     public void setErrorText(String InfoText, Exception e) {
         InfoLabel.setTextFill(Color.RED);
         InfoLabel.setText(InfoText);
+        System.err.println(e.getMessage());
     }
 
     /**
