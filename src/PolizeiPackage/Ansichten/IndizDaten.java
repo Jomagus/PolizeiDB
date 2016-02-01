@@ -8,17 +8,15 @@ import javafx.beans.property.StringProperty;
 public class IndizDaten {
     private IntegerProperty IndizID;
     private StringProperty Datum;
-    private byte[] Bild;
     private StringProperty Text;
     private IntegerProperty PersonenID;
     private IntegerProperty FallID;
     private StringProperty PersonenName;
     private StringProperty FallName;
 
-    public IndizDaten(int NID, String Da, byte[] Bi, String Te, int PID, int FID, String PNa, String FNa) {
+    public IndizDaten(int NID, String Da, String Te, int PID, int FID, String PNa, String FNa) {
         IndizID = new SimpleIntegerProperty(NID);
         Datum = new SimpleStringProperty(Da);
-        Bild = Bi;
         Text = new SimpleStringProperty(Te);
         PersonenID = new SimpleIntegerProperty(PID);
         FallID = new SimpleIntegerProperty(FID);
@@ -48,14 +46,6 @@ public class IndizDaten {
 
     public void setDatum(String datum) {
         this.Datum.set(datum);
-    }
-
-    public byte[] getBild() {
-        return Bild;
-    }
-
-    public void setBild(byte[] bild) {
-        Bild = bild;
     }
 
     public String getText() {

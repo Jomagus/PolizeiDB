@@ -224,6 +224,10 @@ public class Main extends Application {
         PrimaeresLayout.setCenter(Centeransicht);
     }
 
+    public Stage getPrimaereStage() {
+        return PrimaereStage;
+    }
+
     /**
      * Beendet das Programm
      */

@@ -11,10 +11,16 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.file.Files;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,6 +39,10 @@ public class IndizAnsichtManager {
     private ObservableList<IndizDaten> IndizDatenListe;
     private boolean IndizAnsichtGeneriert;
 
+    // unschoene Sachen fuer das Bild laden
+    private File Bild;
+    private Image GeladenesBild;
+
     public IndizAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
@@ -40,6 +50,8 @@ public class IndizAnsichtManager {
         IndizDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         IndizAnsichtGeneriert = false;
+        Bild = null;
+        GeladenesBild = null;
     }
 
     public Node getIndizAnsicht() {
@@ -120,7 +132,7 @@ public class IndizAnsichtManager {
     }
 
     private void erzeugeDetailAnsicht(IndizDaten SpaltenDaten) {
-        Label LabelA = new Label("IndizsID");
+        Label LabelA = new Label("IndizID");
         Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getIndizID()));
 
         Label LabelB = new Label("Datum");
@@ -148,6 +160,34 @@ public class IndizAnsichtManager {
         Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
         Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
         Button ButtonClose = new Button("Detailansicht verlassen");
+
+        ResultSet AntwortBild;
+        GeladenesBild = null;
+        try {
+            AntwortBild = DH.getAnfrageObjekt().executeQuery("SELECT Bild FROM INDIZ WHERE IndizID =" + SpaltenDaten.getIndizID());
+            if (AntwortBild.next()) {
+                byte[] TempBild = AntwortBild.getBytes(1);
+                GeladenesBild = new Image(new ByteArrayInputStream(TempBild));
+            }
+        } catch (Exception e) {
+            IM.setErrorText("Konnte Bild nicht für Detailansicht laden", e);
+            return;
+        }
+        if (GeladenesBild == null) {
+            IM.setErrorText("Unbekannter Fehler beim laden des Bildes für Detailansicht");
+            return;
+        }
+
+        ImageView BildFenster = new ImageView();
+        BildFenster.setImage(GeladenesBild);
+        BildFenster.setFitWidth(300);
+        BildFenster.setPreserveRatio(true);
+        BildFenster.setSmooth(true);
+        BildFenster.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                BildMaximiertAnzeigen();
+            }
+        });
 
         ButtonBearbeiten.setOnAction(event -> {
             Tabelle.getSelectionModel().clearSelection();
@@ -195,7 +235,7 @@ public class IndizAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10,20,10,10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheIndizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, BildFenster, Unten, ButtonSucheIndizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -213,16 +253,16 @@ public class IndizAnsichtManager {
         ResultSet AnfrageAntwort;
         String Text;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT IndizID, Indiz.Datum, INDIZ.Bild, Indiz.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT IndizID, Indiz.Datum, Indiz.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
                     "FROM Indiz, PERSON, FALL WHERE angelegt_zu_FallID = FALL.FallID AND angelegt_von_PersonenID = PersonenID;");
             while (AnfrageAntwort.next()) {
                 Text = "";
-                if (AnfrageAntwort.getObject(4) != null) {
-                    Text = AnfrageAntwort.getString(4);
+                if (AnfrageAntwort.getObject(3) != null) {
+                    Text = AnfrageAntwort.getString(3);
                 }
-                IndizDatenListe.add(new IndizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2), AnfrageAntwort.getBytes(3),
-                        Text, AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6), AnfrageAntwort.getString(7),
-                        AnfrageAntwort.getString(8)));
+                IndizDatenListe.add(new IndizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        Text, AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getString(6),
+                        AnfrageAntwort.getString(7)));
             }
         } catch (SQLException e) {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
@@ -242,6 +282,12 @@ public class IndizAnsichtManager {
 
         Label LabelB = new Label("Datum");
         DatePicker LabelBWert = new DatePicker();
+
+        Label LabelImage = new Label("Bild");
+        Button ButtonImage = new Button("Bild auswählen...");
+
+        ButtonImage.setMaxWidth(Double.MAX_VALUE);
+        ButtonImage.setOnAction(event -> HandleBildLaden(PopUp));
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -301,8 +347,8 @@ public class IndizAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG);
-        Gitter.addColumn(1, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
+        Gitter.addColumn(0, LabelB, LabelImage, LabelC, LabelD, LabelE, LabelF, LabelG);
+        Gitter.addColumn(1, LabelBWert, ButtonImage, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -319,17 +365,20 @@ public class IndizAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "INSERT INTO Indiz (Datum, Text, angelegt_von_PersonenID, angelegt_zu_FallID) VALUES (?, ?, ?, ?)";
+            String SQLString = "INSERT INTO Indiz (Datum, Text, angelegt_von_PersonenID, angelegt_zu_FallID, Bild) VALUES (?, ?, ?, ?, ?)";
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
-                InsertStatement.setString(1, LabelBWert.getValue().toString()); //TODO nullpointer abfangen
+                InsertStatement.setString(1, LabelBWert.getValue().toString());
                 InsertStatement.setString(2, LabelCWert.getText());
                 InsertStatement.setString(3, LabelEWert.getText());
                 InsertStatement.setString(4, LabelGWert.getText());
+                InsertStatement.setBytes(5, Files.readAllBytes(Bild.toPath()));
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 IM.setErrorText("Einfügen Fehlgeschlagen", e);
+            } finally {
+                Bild = null;
             }
             refreshIndizAnsicht();
             PopUp.close();
@@ -364,6 +413,12 @@ public class IndizAnsichtManager {
 
         Label LabelB = new Label("Datum");
         DatePicker LabelBWert = new DatePicker();
+
+        Label LabelImage = new Label("Bild");
+        Button ButtonImage = new Button("Bild auswählen...");
+
+        ButtonImage.setMaxWidth(Double.MAX_VALUE);
+        ButtonImage.setOnAction(event -> HandleBildLaden(PopUp));   //TODO ACHTEN OB NEUES BILD GELADEN ODER NICHT, NUR FALLS JA NEU SETZEN
 
         Label LabelC = new Label("Text");
         TextField LabelCWert = new TextField();
@@ -428,8 +483,8 @@ public class IndizAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0, LabelA, LabelB, LabelC, LabelD, LabelE, LabelF, LabelG);
-        Gitter.addColumn(1, LabelAWert, LabelBWert, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
+        Gitter.addColumn(0, LabelA, LabelB, LabelImage, LabelC, LabelD, LabelE, LabelF, LabelG);
+        Gitter.addColumn(1, LabelAWert, LabelBWert, ButtonImage, LabelCWert, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
 
         VBox AussenBox = new VBox(10);
         HBox InnenBox = new HBox();
@@ -481,5 +536,19 @@ public class IndizAnsichtManager {
             }
         });
         refreshIndizAnsicht();
+    }
+
+    private void HandleBildLaden(Stage Aufrufer) {
+        FileChooser BildAuswaehler = new FileChooser();
+        Bild = BildAuswaehler.showOpenDialog(Aufrufer);
+    }
+
+    private void BildMaximiertAnzeigen() {
+        if (GeladenesBild == null) return;
+        Stage PopUp = new Stage();
+        PopUp.initModality(Modality.APPLICATION_MODAL);
+        PopUp.setTitle("Indiz");
+        PopUp.setScene(new Scene(new BorderPane(new ImageView(GeladenesBild))));
+        PopUp.showAndWait();
     }
 }
