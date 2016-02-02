@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.sqlite.core.DB;
 
 import java.sql.SQLException;
 
@@ -33,6 +32,8 @@ public class Main extends Application {
     PolizistAnsichtManager PolizistAM;
     NotizAnsichtManager NotizAM;
     IndizAnsichtManager IndizAM;
+    OpferAnsichtManager OpferAM;
+    VerdachtigeAnsichtManager VerdachtigeAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -53,6 +54,8 @@ public class Main extends Application {
         PolizistAM = new PolizistAnsichtManager(DBH, IEM, this);
         NotizAM = new NotizAnsichtManager(DBH, IEM, this);
         IndizAM = new IndizAnsichtManager(DBH, IEM, this);
+        OpferAM = new OpferAnsichtManager(DBH, IEM, this);
+        VerdachtigeAM = new VerdachtigeAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -199,8 +202,8 @@ public class Main extends Application {
         Polizisten.setOnAction(event -> PrimaeresLayout.setCenter(PolizistAM.getPolizistAnsicht()));
         Notizen.setOnAction(event -> PrimaeresLayout.setCenter(NotizAM.getNotizAnsicht()));
         Indizien.setOnAction(event -> PrimaeresLayout.setCenter(IndizAM.getIndizAnsicht()));
-        Opfer.setOnAction(event -> {});
-        Verdaechtige.setOnAction(event -> {});
+        Opfer.setOnAction(event -> PrimaeresLayout.setCenter(OpferAM.getOpferAnsicht()));
+        Verdaechtige.setOnAction(event -> PrimaeresLayout.setCenter(VerdachtigeAM.getVerdachtigeAnsicht()));
         Arbeiten.setOnAction(event -> {});
         ArbeitenAn.setOnAction(event -> {});
         LiegtIn.setOnAction(event -> {});
