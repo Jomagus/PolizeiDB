@@ -34,6 +34,7 @@ public class Main extends Application {
     IndizAnsichtManager IndizAM;
     OpferAnsichtManager OpferAM;
     VerdachtigeAnsichtManager VerdachtigeAM;
+    ArbeitenAnsichtManager ArbeitenAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -56,6 +57,7 @@ public class Main extends Application {
         IndizAM = new IndizAnsichtManager(DBH, IEM, this);
         OpferAM = new OpferAnsichtManager(DBH, IEM, this);
         VerdachtigeAM = new VerdachtigeAnsichtManager(DBH, IEM, this);
+        ArbeitenAM = new ArbeitenAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -204,7 +206,7 @@ public class Main extends Application {
         Indizien.setOnAction(event -> PrimaeresLayout.setCenter(IndizAM.getIndizAnsicht()));
         Opfer.setOnAction(event -> PrimaeresLayout.setCenter(OpferAM.getOpferAnsicht()));
         Verdaechtige.setOnAction(event -> PrimaeresLayout.setCenter(VerdachtigeAM.getVerdachtigeAnsicht()));
-        Arbeiten.setOnAction(event -> {});
+        Arbeiten.setOnAction(event -> PrimaeresLayout.setCenter(ArbeitenAM.getArbeitenAnsicht()));
         ArbeitenAn.setOnAction(event -> {});
         LiegtIn.setOnAction(event -> {});
 
