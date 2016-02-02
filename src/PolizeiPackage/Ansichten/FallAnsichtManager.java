@@ -19,8 +19,6 @@ import javafx.util.Callback;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Struct;
-import java.text.DateFormat;
 import java.time.LocalDate;
 
 /**
@@ -110,7 +108,7 @@ public class FallAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<FallDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -167,8 +165,8 @@ public class FallAnsichtManager {
         GridPane Oben = new GridPane();
         Oben.setHgap(10);
         Oben.setVgap(10);
-        Oben.addColumn(0,LabelArtId, LabelName, LabelDatumA, LabelDatumB);
-        Oben.addColumn(1,LabelArtIdWert, TextFeldName, LabelDatumAInhalt, LabelDatumBInhalt);
+        Oben.addColumn(0, LabelArtId, LabelName, LabelDatumA, LabelDatumB);
+        Oben.addColumn(1, LabelArtIdWert, TextFeldName, LabelDatumAInhalt, LabelDatumBInhalt);
         Oben.getColumnConstraints().add(new ColumnConstraints(100));
         Oben.getColumnConstraints().add(new ColumnConstraints(200));
 
@@ -178,7 +176,7 @@ public class FallAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheFallId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -257,7 +255,7 @@ public class FallAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelName, LabelA, LabelB);
+        Gitter.addColumn(0, LabelName, LabelA, LabelB);
         Gitter.addColumn(1, TextFeldName, TextFeldA, TextFeldB);
 
         VBox AussenBox = new VBox(10);
@@ -419,7 +417,7 @@ public class FallAnsichtManager {
 
         Nutzerauswahl.forEach(fallDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM FALL WHERE FallID = "+ fallDaten.getFallID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM FALL WHERE FallID = " + fallDaten.getFallID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

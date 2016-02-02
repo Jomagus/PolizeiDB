@@ -121,7 +121,7 @@ public class IndizAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<IndizDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -206,7 +206,6 @@ public class IndizAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -234,7 +233,7 @@ public class IndizAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, BildFenster, Unten, ButtonSucheIndizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -541,7 +540,7 @@ public class IndizAnsichtManager {
 
         Nutzerauswahl.forEach(IndizDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Indiz WHERE IndizID = "+ IndizDaten.getIndizID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Indiz WHERE IndizID = " + IndizDaten.getIndizID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

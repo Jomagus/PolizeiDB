@@ -122,7 +122,7 @@ public class PolizistAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<PolizistDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -177,7 +177,6 @@ public class PolizistAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -202,7 +201,7 @@ public class PolizistAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePolizistsId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -315,7 +314,7 @@ public class PolizistAnsichtManager {
             if (LabelFWert.getValue() != null) {
                 SQLString = "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht, Todesdatum) VALUES (?, ?, ?, ?, ?)";
             } else {
-                SQLString= "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht) VALUES (?, ?, ?, ?)";
+                SQLString = "INSERT INTO PERSON (Name, Geburtsdatum, Nationalität, Geschlecht) VALUES (?, ?, ?, ?)";
             }
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
@@ -486,7 +485,7 @@ public class PolizistAnsichtManager {
 
         Nutzerauswahl.forEach(PolizistDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM POLIZIST WHERE PersonenID = "+ PolizistDaten.getPersonenID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM POLIZIST WHERE PersonenID = " + PolizistDaten.getPersonenID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

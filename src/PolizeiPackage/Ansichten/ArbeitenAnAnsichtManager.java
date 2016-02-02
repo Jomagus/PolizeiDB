@@ -106,7 +106,7 @@ public class ArbeitenAnAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<ArbeitenAnDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -160,7 +160,6 @@ public class ArbeitenAnAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -188,7 +187,7 @@ public class ArbeitenAnAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitenAnsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -311,7 +310,7 @@ public class ArbeitenAnAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelD, LabelE, LabelF, LabelG, LabelH, LabelI);
+        Gitter.addColumn(0, LabelD, LabelE, LabelF, LabelG, LabelH, LabelI);
         Gitter.addColumn(1, LabelDWert, LabelEWert, LabelFWert, LabelGWert, LabelHWert, LabelIWert);
 
         VBox AussenBox = new VBox(10);
@@ -483,11 +482,11 @@ public class ArbeitenAnAnsichtManager {
             String SQLString;
             if (LabelIWert.getValue() == null) {
                 SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?" +
-                        "WHERE PersonenID= " + Auswahl.getPersonenID()+
+                        "WHERE PersonenID= " + Auswahl.getPersonenID() +
                         " AND FallID= " + Auswahl.getFallID();
             } else {
                 SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?, bis=?  " +
-                        " WHERE PersonenID= " + Auswahl.getPersonenID()+
+                        " WHERE PersonenID= " + Auswahl.getPersonenID() +
                         " AND FallID= " + Auswahl.getFallID();
             }
             try {
@@ -520,7 +519,7 @@ public class ArbeitenAnAnsichtManager {
 
         Nutzerauswahl.forEach(ArbeitenAnDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ARBEITEN_AN WHERE PersonenID= " + ArbeitenAnDaten.getPersonenID()+
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ARBEITEN_AN WHERE PersonenID= " + ArbeitenAnDaten.getPersonenID() +
                         " AND FallID= " + ArbeitenAnDaten.getFallID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);

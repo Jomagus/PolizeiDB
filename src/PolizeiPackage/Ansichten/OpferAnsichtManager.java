@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Art
@@ -97,7 +96,7 @@ public class OpferAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<OpferDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -145,7 +144,6 @@ public class OpferAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -173,7 +171,7 @@ public class OpferAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheOpfersId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();

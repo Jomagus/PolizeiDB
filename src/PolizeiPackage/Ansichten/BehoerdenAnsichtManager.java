@@ -102,7 +102,7 @@ public class BehoerdenAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<BehoerdenDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -152,7 +152,6 @@ public class BehoerdenAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -178,7 +177,7 @@ public class BehoerdenAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBehoerdenId, ButtonSucheBezirksId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -403,7 +402,7 @@ public class BehoerdenAnsichtManager {
 
         Nutzerauswahl.forEach(BehoerdenDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM BEHÖRDE WHERE BehördenID = "+ BehoerdenDaten.getBehoerdenID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM BEHÖRDE WHERE BehördenID = " + BehoerdenDaten.getBehoerdenID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

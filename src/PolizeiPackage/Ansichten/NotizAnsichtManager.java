@@ -109,7 +109,7 @@ public class NotizAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<NotizDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -166,7 +166,6 @@ public class NotizAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -194,7 +193,7 @@ public class NotizAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheNotizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -470,7 +469,7 @@ public class NotizAnsichtManager {
 
         Nutzerauswahl.forEach(NotizDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Notiz WHERE NotizID = "+ NotizDaten.getNotizID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Notiz WHERE NotizID = " + NotizDaten.getNotizID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

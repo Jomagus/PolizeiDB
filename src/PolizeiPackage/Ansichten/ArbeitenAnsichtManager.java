@@ -106,7 +106,7 @@ public class ArbeitenAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<ArbeitenDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -160,7 +160,6 @@ public class ArbeitenAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -188,7 +187,7 @@ public class ArbeitenAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitensId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -307,7 +306,7 @@ public class ArbeitenAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelD, LabelE, LabelF, LabelG, LabelH, LabelI);
+        Gitter.addColumn(0, LabelD, LabelE, LabelF, LabelG, LabelH, LabelI);
         Gitter.addColumn(1, LabelDWert, LabelEWert, LabelFWert, LabelGWert, LabelHWert, LabelIWert);
 
         VBox AussenBox = new VBox(10);
@@ -468,7 +467,7 @@ public class ArbeitenAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString = "UPDATE ARBEITEN SET PersonenID=?, BehördenID=?, von=?, bis=?  " +
-                    "WHERE PersonenID= " + Auswahl.getPersonenID()+
+                    "WHERE PersonenID= " + Auswahl.getPersonenID() +
                     " AND BehördenID= " + Auswahl.getBehordenID() +
                     " AND von= " + Auswahl.getVonDatum() +
                     " AND bis =" + Auswahl.getBisDatum();
@@ -500,7 +499,7 @@ public class ArbeitenAnsichtManager {
 
         Nutzerauswahl.forEach(ArbeitenDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Arbeiten WHERE PersonenID= " + ArbeitenDaten.getPersonenID()+
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Arbeiten WHERE PersonenID= " + ArbeitenDaten.getPersonenID() +
                         " AND BehördenID= " + ArbeitenDaten.getBehordenID() +
                         " AND von= " + ArbeitenDaten.getVonDatum() +
                         " AND bis =" + ArbeitenDaten.getBisDatum());

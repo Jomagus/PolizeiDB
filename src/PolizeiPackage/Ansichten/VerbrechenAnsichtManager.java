@@ -115,7 +115,7 @@ public class VerbrechenAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<VerbrechenDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -179,7 +179,6 @@ public class VerbrechenAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -207,7 +206,7 @@ public class VerbrechenAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheVerbrechensId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -226,7 +225,7 @@ public class VerbrechenAnsichtManager {
         ResultSet AnfrageAntwort;
         try {
             AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
-                    "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
+                    "  BEZIRK.Name AS BezirkName, FALL.Name AS FallName, ART.Name AS ArtName\n" +
                     "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
                     "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID");
             while (AnfrageAntwort.next()) {
@@ -534,7 +533,7 @@ public class VerbrechenAnsichtManager {
 
         Nutzerauswahl.forEach(VerbrechenDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Verbrechen WHERE VerbrechensID = "+ VerbrechenDaten.getVerbrechensID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Verbrechen WHERE VerbrechensID = " + VerbrechenDaten.getVerbrechensID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }
@@ -563,7 +562,8 @@ public class VerbrechenAnsichtManager {
                         AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
                         AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+        } //TODO evtl null returnen bei Fehler
     }
 
     public void FallAnsichtQuer(int FallID) {
@@ -582,6 +582,7 @@ public class VerbrechenAnsichtManager {
                         AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
                         AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
-        } catch (SQLException e) {} //TODO evtl null returnen bei Fehler
+        } catch (SQLException e) {
+        } //TODO evtl null returnen bei Fehler
     }
 }

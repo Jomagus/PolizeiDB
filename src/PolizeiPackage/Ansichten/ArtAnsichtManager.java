@@ -100,7 +100,7 @@ public class ArtAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<ArtDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -155,8 +155,8 @@ public class ArtAnsichtManager {
         GridPane Oben = new GridPane();
         Oben.setHgap(10);
         Oben.setVgap(10);
-        Oben.addColumn(0,LabelArtId, LabelName, LabelBeschreibung);
-        Oben.addColumn(1,LabelArtIdWert, TextFeldName, TextFeldBeschreibung);
+        Oben.addColumn(0, LabelArtId, LabelName, LabelBeschreibung);
+        Oben.addColumn(1, LabelArtIdWert, TextFeldName, TextFeldBeschreibung);
         Oben.getColumnConstraints().add(new ColumnConstraints(100));
         Oben.getColumnConstraints().add(new ColumnConstraints(200));
 
@@ -166,7 +166,7 @@ public class ArtAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArtID, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -220,7 +220,7 @@ public class ArtAnsichtManager {
         ButtonFort.setMaxWidth(Double.MAX_VALUE);
         ButtonAbb.setMaxWidth(Double.MAX_VALUE);
 
-        Gitter.addColumn(0,  LabelName, LabelBeschreibung);
+        Gitter.addColumn(0, LabelName, LabelBeschreibung);
         Gitter.addColumn(1, TextFeldName, TextFeldBeschreibung);
 
         VBox AussenBox = new VBox(10);
@@ -342,7 +342,7 @@ public class ArtAnsichtManager {
 
         Nutzerauswahl.forEach(artDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ART WHERE ArtID = "+ artDaten.getArtID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ART WHERE ArtID = " + artDaten.getArtID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

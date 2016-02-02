@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 /**
  * Liefert Tabelle fuer die Verdaechtigen
@@ -103,7 +102,7 @@ public class VerdachtigeAnsichtManager {
         Tabelle.setRowFactory(param -> {
             TableRow<VerdachtigeDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
+                if (event.getClickCount() == 2 && (!Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
                 }
             });
@@ -154,7 +153,6 @@ public class VerdachtigeAnsichtManager {
         //TODO eventhandler fuer die Such Buttons
 
 
-
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -182,7 +180,7 @@ public class VerdachtigeAnsichtManager {
         Unten.alignmentProperty().setValue(Pos.CENTER);
 
         VBox Mittelteil = new VBox(10);
-        Mittelteil.setPadding(new Insets(10,20,10,10));
+        Mittelteil.setPadding(new Insets(10, 20, 10, 10));
         Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheVerdachtigesId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
@@ -449,7 +447,7 @@ public class VerdachtigeAnsichtManager {
 
         Nutzerauswahl.forEach(VerdachtigeDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM SIND_VERDÄCHTIGE WHERE PersonenID = "+ VerdachtigeDaten.getPersonenID() +
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM SIND_VERDÄCHTIGE WHERE PersonenID = " + VerdachtigeDaten.getPersonenID() +
                         " AND VerbrechensID = " + VerdachtigeDaten.getVerbrechensID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
