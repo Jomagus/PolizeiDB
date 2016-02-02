@@ -563,7 +563,8 @@ public class VerbrechenAnsichtManager {
                         AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
         } catch (SQLException e) {
-        } //TODO evtl null returnen bei Fehler
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
     }
 
     public void FallAnsichtQuer(int FallID) {
@@ -583,6 +584,7 @@ public class VerbrechenAnsichtManager {
                         AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
             }
         } catch (SQLException e) {
-        } //TODO evtl null returnen bei Fehler
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
     }
 }

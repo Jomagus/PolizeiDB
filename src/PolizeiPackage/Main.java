@@ -64,6 +64,10 @@ public class Main extends Application {
         ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
         LageAM = new LageAnsichtManager(DBH, IEM, this);
 
+        ArbeitenAnAM.setFallAM(FallAM);
+        ArbeitenAnAM.setPersonenAM(PersonenAM);
+
+
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
 

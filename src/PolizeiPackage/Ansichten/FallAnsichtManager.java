@@ -424,4 +424,26 @@ public class FallAnsichtManager {
         });
         refreshFallAnsicht();
     }
+
+    public void FallSuchAnsicht(int FID) {
+        Hauptprogramm.setMittlereAnsicht(getFallAnsicht());
+        FallDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT * FROM FALL WHERE FallID = ?");
+            Anfrage.setInt(1, FID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                if (AnfrageAntwort.getObject("Enddatum") != null) {
+                    FallDatenListe.add(new FallDaten(AnfrageAntwort.getInt("FallID"), AnfrageAntwort.getString("Name"),
+                            AnfrageAntwort.getString("Eröffnungsdatum"), AnfrageAntwort.getString("Enddatum")));
+                } else {
+                    FallDatenListe.add(new FallDaten(AnfrageAntwort.getInt("FallID"), AnfrageAntwort.getString("Name"),
+                            AnfrageAntwort.getString("Eröffnungsdatum"), ""));
+                }
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
+    }
 }

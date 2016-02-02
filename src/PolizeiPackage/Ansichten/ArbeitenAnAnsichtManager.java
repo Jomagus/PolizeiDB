@@ -33,6 +33,8 @@ public class ArbeitenAnAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<ArbeitenAnDaten> ArbeitenAnDatenListe;
     private boolean ArbeitenAnAnsichtGeneriert;
+    private PersonenAnsichtManager PersonenAM;
+    private FallAnsichtManager FallAM;
 
     public ArbeitenAnAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -41,6 +43,14 @@ public class ArbeitenAnAnsichtManager {
         ArbeitenAnDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         ArbeitenAnAnsichtGeneriert = false;
+    }
+
+    public void setPersonenAM(PersonenAnsichtManager PAM) {
+        PersonenAM = PAM;
+    }
+
+    public void setFallAM(FallAnsichtManager FAM) {
+        FallAM = FAM;
     }
 
     public Node getArbeitenAnAnsicht() {
@@ -137,10 +147,8 @@ public class ArbeitenAnAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheArbeitenAnsId = new Button("Suche nach Vorkommen von ArbeitenAnsID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
+        Button ButtonSuchePersonenID = new Button("Suche nach Vorkommen von PersonenID");
         Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -155,21 +163,22 @@ public class ArbeitenAnAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
-
+        ButtonSuchePersonenID.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PersonenAM.PersonenSuchAnsicht(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheFallId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            FallAM.FallSuchAnsicht(SpaltenDaten.getFallID());
+        });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheArbeitenAnsId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSuchePersonenID.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -188,7 +197,7 @@ public class ArbeitenAnAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitenAnsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePersonenID, ButtonSucheFallId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

@@ -467,4 +467,26 @@ public class PersonenAnsichtManager {
         });
         refreshPersonenAnsicht();
     }
+
+    /**
+     * Setzt eine Personenansicht wo nur Personen mit dieser PersonenID angezeigt werden
+     *
+     * @param PID PersonenID die gesucht ist
+     */
+    public void PersonenSuchAnsicht(int PID) {
+        Hauptprogramm.setMittlereAnsicht(getPersonenAnsicht());
+        PersonenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT * FROM PERSON WHERE PersonenID = ?;");
+            Anfrage.setInt(1, PID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                PersonenDatenListe.add(new PersonenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), AnfrageAntwort.getString(6)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
+    }
 }
