@@ -37,6 +37,7 @@ public class Main extends Application {
     VerdachtigeAnsichtManager VerdachtigeAM;
     ArbeitenAnsichtManager ArbeitenAM;
     ArbeitenAnAnsichtManager ArbeitenAnAM;
+    LageAnsichtManager LageAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -61,6 +62,7 @@ public class Main extends Application {
         VerdachtigeAM = new VerdachtigeAnsichtManager(DBH, IEM, this);
         ArbeitenAM = new ArbeitenAnsichtManager(DBH, IEM, this);
         ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
+        LageAM = new LageAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -212,7 +214,7 @@ public class Main extends Application {
         Verdaechtige.setOnAction(event -> PrimaeresLayout.setCenter(VerdachtigeAM.getVerdachtigeAnsicht()));
         Arbeiten.setOnAction(event -> PrimaeresLayout.setCenter(ArbeitenAM.getArbeitenAnsicht()));
         ArbeitenAn.setOnAction(event -> PrimaeresLayout.setCenter(ArbeitenAnAM.getArbeitenAnAnsicht()));
-        LiegtIn.setOnAction(event -> {});
+        LiegtIn.setOnAction(event -> PrimaeresLayout.setCenter(LageAM.getLageAnsicht()));
 
 
         Inneres.getChildren().addAll(Beschriftung, Faelle, Verbrechen, Arten, Bezirke, Behoerden, Personen, Polizisten, Notizen, Indizien, Opfer, Verdaechtige, Arbeiten, ArbeitenAn, LiegtIn);
