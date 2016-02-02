@@ -24,32 +24,32 @@ import java.time.LocalDate;
 /**
  * Liefert Tabelle fuer die Art
  */
-public class ArbeitenAnsichtManager {
+public class ArbeitenAnAnsichtManager {
 
     private DatenbankHandler DH;
     private InfoErrorManager IM;
     private Main Hauptprogramm;
-    private TableView<ArbeitenDaten> Tabelle;
+    private TableView<ArbeitenAnDaten> Tabelle;
     private BorderPane DatenAnsicht;
-    private ObservableList<ArbeitenDaten> ArbeitenDatenListe;
-    private boolean ArbeitenAnsichtGeneriert;
+    private ObservableList<ArbeitenAnDaten> ArbeitenAnDatenListe;
+    private boolean ArbeitenAnAnsichtGeneriert;
 
-    public ArbeitenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
+    public ArbeitenAnAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
         Hauptprogramm = HauptFenster;
-        ArbeitenDatenListe = FXCollections.observableArrayList();
+        ArbeitenAnDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
-        ArbeitenAnsichtGeneriert = false;
+        ArbeitenAnAnsichtGeneriert = false;
     }
 
-    public Node getArbeitenAnsicht() {
-        if (ArbeitenAnsichtGeneriert) {
-            refreshArbeitenAnsicht();
+    public Node getArbeitenAnAnsicht() {
+        if (ArbeitenAnAnsichtGeneriert) {
+            refreshArbeitenAnAnsicht();
             return DatenAnsicht;
         }
-        IM.setInfoText("Lade Arbeiten Ansicht");
-        DatenAnsicht = new BorderPane(getArbeitenAnsichtInnereTabelle());
+        IM.setInfoText("Lade ArbeitenAn Ansicht");
+        DatenAnsicht = new BorderPane(getArbeitenAnAnsichtInnereTabelle());
 
         HBox ButtonLeiste = new HBox(10);
         ButtonLeiste.setPadding(new Insets(10));
@@ -65,36 +65,36 @@ public class ArbeitenAnsichtManager {
         ButtonLeiste.getChildren().addAll(ButtonNeue, ButtonChan, ButtonDele);
         DatenAnsicht.setBottom(ButtonLeiste);
 
-        IM.setInfoText("Laden der Arbeiten Ansicht erfolgreich");
-        ArbeitenAnsichtGeneriert = true;
+        IM.setInfoText("Laden der ArbeitenAn Ansicht erfolgreich");
+        ArbeitenAnAnsichtGeneriert = true;
         return DatenAnsicht;
     }
 
     /**
      * Erzeugt eine TableView mit den Daten aus der Datenbank.
      *
-     * @return Eine TableView mit Arbeiten Daten
+     * @return Eine TableView mit ArbeitenAn Daten
      */
-    private Node getArbeitenAnsichtInnereTabelle() {
-        refreshArbeitenAnsicht();
+    private Node getArbeitenAnAnsichtInnereTabelle() {
+        refreshArbeitenAnAnsicht();
 
-        TableColumn<ArbeitenDaten, String> SpalteName = new TableColumn<>("Name");
+        TableColumn<ArbeitenAnDaten, String> SpalteName = new TableColumn<>("Name");
         SpalteName.setMinWidth(200);
         SpalteName.setCellValueFactory(new PropertyValueFactory<>("PersonenName"));
 
-        TableColumn<ArbeitenDaten, String> SpalteDatum = new TableColumn<>("Behörde");
+        TableColumn<ArbeitenAnDaten, String> SpalteDatum = new TableColumn<>("Fall");
         SpalteDatum.setMinWidth(200);
-        SpalteDatum.setCellValueFactory(new PropertyValueFactory<>("BehordenName"));
+        SpalteDatum.setCellValueFactory(new PropertyValueFactory<>("FallName"));
 
-        TableColumn<ArbeitenDaten, String> SpalteBezirk = new TableColumn<>("von");
+        TableColumn<ArbeitenAnDaten, String> SpalteBezirk = new TableColumn<>("von");
         SpalteBezirk.setMinWidth(200);
         SpalteBezirk.setCellValueFactory(new PropertyValueFactory<>("VonDatum"));
 
-        TableColumn<ArbeitenDaten, String> SpalteFall = new TableColumn<>("bis");
+        TableColumn<ArbeitenAnDaten, String> SpalteFall = new TableColumn<>("bis");
         SpalteFall.setMinWidth(200);
         SpalteFall.setCellValueFactory(new PropertyValueFactory<>("BisDatum"));
 
-        Tabelle.setItems(ArbeitenDatenListe);
+        Tabelle.setItems(ArbeitenAnDatenListe);
         Tabelle.getColumns().add(SpalteName);
         Tabelle.getColumns().add(SpalteDatum);
         Tabelle.getColumns().add(SpalteBezirk);
@@ -104,7 +104,7 @@ public class ArbeitenAnsichtManager {
 
         // Doppelklicke auf Spalten sollen Detailansichten oeffnen:
         Tabelle.setRowFactory(param -> {
-            TableRow<ArbeitenDaten> Spalte = new TableRow<>();
+            TableRow<ArbeitenAnDaten> Spalte = new TableRow<>();
             Spalte.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! Spalte.isEmpty())) {
                     erzeugeDetailAnsicht(Spalte.getItem());
@@ -116,18 +116,18 @@ public class ArbeitenAnsichtManager {
         return Tabelle;
     }
 
-    private void erzeugeDetailAnsicht(ArbeitenDaten SpaltenDaten) {
+    private void erzeugeDetailAnsicht(ArbeitenAnDaten SpaltenDaten) {
         Label LabelA = new Label("PersonenID");
         Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getPersonenID()));
 
         Label LabelB = new Label("Name");
         Label LabelBWert = new Label(SpaltenDaten.getPersonenName());
 
-        Label LabelC = new Label("BehördenID");
-        Label LabelCWert = new Label(Integer.toString(SpaltenDaten.getBehordenID()));
+        Label LabelC = new Label("FallID");
+        Label LabelCWert = new Label(Integer.toString(SpaltenDaten.getFallID()));
 
-        Label LabelD = new Label("Behörde");
-        Label LabelDWert = new Label(SpaltenDaten.getBehordenName());
+        Label LabelD = new Label("Fall");
+        Label LabelDWert = new Label(SpaltenDaten.getFallName());
 
         Label LabelE = new Label("von");
         Label LabelEWert = new Label(SpaltenDaten.getVonDatum());
@@ -137,7 +137,7 @@ public class ArbeitenAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheArbeitensId = new Button("Suche nach Vorkommen von ArbeitensID");
+        Button ButtonSucheArbeitenAnsId = new Button("Suche nach Vorkommen von ArbeitenAnsID");
         Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
         Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
         Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
@@ -167,7 +167,7 @@ public class ArbeitenAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheArbeitensId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheArbeitenAnsId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
@@ -189,7 +189,7 @@ public class ArbeitenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10,20,10,10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitensId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitenAnsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -202,15 +202,19 @@ public class ArbeitenAnsichtManager {
     /**
      * Aktualisiert die JavaFX vorliegenden Daten mit Daten aus der Datenbank.
      */
-    public void refreshArbeitenAnsicht() {
-        ArbeitenDatenListe.clear();
+    public void refreshArbeitenAnAnsicht() {
+        ArbeitenAnDatenListe.clear();
         ResultSet AnfrageAntwort;
         try {
-            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN.PersonenID, PERSON.Name, ARBEITEN.BehördenID, BEHÖRDE.Name, von, bis " +
-                    "FROM ARBEITEN, PERSON, BEHÖRDE WHERE ARBEITEN.PersonenID = PERSON.PersonenID AND ARBEITEN.BehördenID = BEHÖRDE.BehördenID;");
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN_AN.PersonenID, PERSON.Name, ARBEITEN_AN.FallID, FALL.Name, ARBEITEN_AN.von, ARBEITEN_AN.bis " +
+                    "FROM ARBEITEN_AN, PERSON, FALL WHERE ARBEITEN_AN.FallID = FALL.FallID AND ARBEITEN_AN.PersonenID = PERSON.PersonenID;");
             while (AnfrageAntwort.next()) {
-                ArbeitenDatenListe.add(new ArbeitenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
-                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), AnfrageAntwort.getString(6)));
+                String BisDatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    BisDatum = AnfrageAntwort.getString(6);
+                }
+                ArbeitenAnDatenListe.add(new ArbeitenAnDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), BisDatum));
             }
         } catch (SQLException e) {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
@@ -251,21 +255,21 @@ public class ArbeitenAnsichtManager {
             }
         }));
 
-        Label LabelF = new Label("Behörde");
+        Label LabelF = new Label("Fall");
         Label LabelFWert = new Label();
 
-        Label LabelG = new Label("BehördenID");
+        Label LabelG = new Label("FallID");
         TextField LabelGWert = new TextField();
 
         LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
             try {
-                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM BEHÖRDE WHERE BehördenID = ?");
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM FALL WHERE FallID= ?");
                 NutzerInput.setInt(1, Integer.parseInt(newValue));
                 ResultSet Antwort = NutzerInput.executeQuery();
                 if (Antwort.next()) {
                     LabelFWert.setText(Antwort.getString(1));
                 } else {
-                    LabelFWert.setText("Ungültige BehördenID");
+                    LabelFWert.setText("Ungültige FallID");
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
@@ -325,19 +329,26 @@ public class ArbeitenAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "INSERT INTO ARBEITEN (PersonenID, BehördenID, von, bis) VALUES (?, ?, ?, ?)";
+            String SQLString;
+            if (LabelIWert.getValue() == null) {
+                SQLString = "INSERT INTO ARBEITEN_AN (PersonenID, FallID, von) VALUES (?, ?, ?)";
+            } else {
+                SQLString = "INSERT INTO ARBEITEN_AN (PersonenID, FallID, von, bis) VALUES (?, ?, ?, ?)";
+            }
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, LabelEWert.getText());
                 InsertStatement.setString(2, LabelGWert.getText());
                 InsertStatement.setString(3, LabelHWert.getValue().toString());
-                InsertStatement.setString(4, LabelIWert.getValue().toString());
+                if (LabelIWert.getValue() != null) {
+                    InsertStatement.setString(4, LabelIWert.getValue().toString());
+                }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Einfügen durchgeführt");
             } catch (Exception e) {
                 IM.setErrorText("Einfügen Fehlgeschlagen", e);
             }
-            refreshArbeitenAnsicht();
+            refreshArbeitenAnAnsicht();
             PopUp.close();
         });
 
@@ -346,12 +357,12 @@ public class ArbeitenAnsichtManager {
     }
 
     private void updateSelectedEntry() {
-        ObservableList<ArbeitenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<ArbeitenAnDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.size() != 1) {
             IM.setErrorText("Es muss genau ein Element ausgewählt werden");
             return;
         }
-        ArbeitenDaten Auswahl = Nutzerauswahl.get(0);
+        ArbeitenAnDaten Auswahl = Nutzerauswahl.get(0);
 
         // Jetzt erzeugen wir ein PopUp zum veraendern des Eintrags
 
@@ -388,21 +399,21 @@ public class ArbeitenAnsichtManager {
             }
         }));
 
-        Label LabelF = new Label("Behörde");
+        Label LabelF = new Label("Fall");
         Label LabelFWert = new Label();
 
-        Label LabelG = new Label("BehördenID");
+        Label LabelG = new Label("FallID");
         TextField LabelGWert = new TextField();
 
         LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
             try {
-                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM BEHÖRDE WHERE BehördenID = ?");
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM FALL WHERE FallID= ?");
                 NutzerInput.setInt(1, Integer.parseInt(newValue));
                 ResultSet Antwort = NutzerInput.executeQuery();
                 if (Antwort.next()) {
                     LabelFWert.setText(Antwort.getString(1));
                 } else {
-                    LabelFWert.setText("Ungültige BehördenID");
+                    LabelFWert.setText("Ungültige FallID");
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
@@ -436,9 +447,11 @@ public class ArbeitenAnsichtManager {
         LabelIWert.setDayCellFactory(TagesZellenFabtrik);
 
         LabelEWert.setText(Integer.toString(Auswahl.getPersonenID()));
-        LabelGWert.setText(Integer.toString(Auswahl.getBehordenID()));
+        LabelGWert.setText(Integer.toString(Auswahl.getFallID()));
         LabelHWert.setValue(LocalDate.parse(Auswahl.getVonDatum()));    //TODO exceptionSSS (2 mal hier)
-        LabelIWert.setValue(LocalDate.parse(Auswahl.getBisDatum()));
+        if (!Auswahl.getBisDatum().isEmpty()) {
+            LabelIWert.setValue(LocalDate.parse(Auswahl.getBisDatum()));
+        }
 
         Button ButtonFort = new Button("Fortfahren");
         Button ButtonAbb = new Button("Abbrechen");
@@ -467,23 +480,30 @@ public class ArbeitenAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE ARBEITEN SET PersonenID=?, BehördenID=?, von=?, bis=?  " +
-                    "WHERE PersonenID= " + Auswahl.getPersonenID()+
-                    " AND BehördenID= " + Auswahl.getBehordenID() +
-                    " AND von= " + Auswahl.getVonDatum() +
-                    " AND bis =" + Auswahl.getBisDatum();
+            String SQLString;
+            if (LabelIWert.getValue() == null) {
+                SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?" +
+                        "WHERE PersonenID= " + Auswahl.getPersonenID()+
+                        " AND FallID= " + Auswahl.getFallID();
+            } else {
+                SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?, bis=?  " +
+                        " WHERE PersonenID= " + Auswahl.getPersonenID()+
+                        " AND FallID= " + Auswahl.getFallID();
+            }
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setInt(1, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(2, Integer.parseInt(LabelGWert.getText()));
                 SQLInjektionNeinNein.setString(3, LabelHWert.getValue().toString());
-                SQLInjektionNeinNein.setString(4, LabelIWert.getValue().toString());
+                if (LabelIWert.getValue() != null) {
+                    SQLInjektionNeinNein.setString(4, LabelIWert.getValue().toString());
+                }
                 SQLInjektionNeinNein.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");
             } catch (Exception e) {
                 IM.setErrorText("Ändern Fehlgeschlagen", e);
             }
-            refreshArbeitenAnsicht();
+            refreshArbeitenAnAnsicht();
             PopUp.close();
         });
 
@@ -492,22 +512,20 @@ public class ArbeitenAnsichtManager {
     }
 
     private void deleteSelectedEntrys() {
-        ObservableList<ArbeitenDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
+        ObservableList<ArbeitenAnDaten> Nutzerauswahl = Tabelle.getSelectionModel().getSelectedItems();
         if (Nutzerauswahl.isEmpty()) {
             IM.setErrorText("Es muss mindestens ein Eintrag ausgewählt sein");
             return;
         }
 
-        Nutzerauswahl.forEach(ArbeitenDaten -> {
+        Nutzerauswahl.forEach(ArbeitenAnDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Arbeiten WHERE PersonenID= " + ArbeitenDaten.getPersonenID()+
-                        " AND BehördenID= " + ArbeitenDaten.getBehordenID() +
-                        " AND von= " + ArbeitenDaten.getVonDatum() +
-                        " AND bis =" + ArbeitenDaten.getBisDatum());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM ARBEITEN_AN WHERE PersonenID= " + ArbeitenAnDaten.getPersonenID()+
+                        " AND FallID= " + ArbeitenAnDaten.getFallID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }
         });
-        refreshArbeitenAnsicht();
+        refreshArbeitenAnAnsicht();
     }
 }

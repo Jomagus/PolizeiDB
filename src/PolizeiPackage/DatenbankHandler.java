@@ -171,10 +171,13 @@ public class DatenbankHandler {
     }
 
 
-
-
-
-
+    /**
+     * Schliest und oeffnet die Verbindung zur Datenbank wieder.
+     */
+    public void verbindeDatenbankNeu() {
+        BeendeDatenbankAnbindung();
+        VerbindeDatenbank();
+    }
 
     /**
      * Zwingt die Datenbankanbindung beendet zu werden.

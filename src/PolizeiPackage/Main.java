@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.sqlite.core.DB;
 
 import java.sql.SQLException;
 
@@ -35,6 +36,7 @@ public class Main extends Application {
     OpferAnsichtManager OpferAM;
     VerdachtigeAnsichtManager VerdachtigeAM;
     ArbeitenAnsichtManager ArbeitenAM;
+    ArbeitenAnAnsichtManager ArbeitenAnAM;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -58,6 +60,7 @@ public class Main extends Application {
         OpferAM = new OpferAnsichtManager(DBH, IEM, this);
         VerdachtigeAM = new VerdachtigeAnsichtManager(DBH, IEM, this);
         ArbeitenAM = new ArbeitenAnsichtManager(DBH, IEM, this);
+        ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
 
         ArtAM.setVerbrechensManager(VerbrechenAM);
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
@@ -124,6 +127,7 @@ public class Main extends Application {
 
         ItemDBVacuum.setOnAction(event -> {
             try {
+                DBH.verbindeDatenbankNeu();
                 DBH.getAnfrageObjekt().execute("VACUUM ;");
                 IEM.setInfoText("Datenbank optimiert");
             } catch (SQLException e) {
@@ -207,7 +211,7 @@ public class Main extends Application {
         Opfer.setOnAction(event -> PrimaeresLayout.setCenter(OpferAM.getOpferAnsicht()));
         Verdaechtige.setOnAction(event -> PrimaeresLayout.setCenter(VerdachtigeAM.getVerdachtigeAnsicht()));
         Arbeiten.setOnAction(event -> PrimaeresLayout.setCenter(ArbeitenAM.getArbeitenAnsicht()));
-        ArbeitenAn.setOnAction(event -> {});
+        ArbeitenAn.setOnAction(event -> PrimaeresLayout.setCenter(ArbeitenAnAM.getArbeitenAnAnsicht()));
         LiegtIn.setOnAction(event -> {});
 
 
