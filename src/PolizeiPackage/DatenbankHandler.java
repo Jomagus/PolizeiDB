@@ -46,7 +46,20 @@ public class DatenbankHandler {
     public void RebuildDatabase() {
         //TODO hier vielleicht disconnecten, bestehnende Datenbankdatei löschen und dann neu Verbinden
         try {
-            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS PERSON CASCADE;\n");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS ARBEITEN;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS ARBEITEN_AN;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS ART;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS BEHÖRDE;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS BEZIRK;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS FALL;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS INDIZ;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS LIEGT_IN;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS NOTIZ;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS PERSON;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS POLIZIST;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS SIND_OPFER;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS SIND_VERDÄCHTIGE;");
+            AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS VERBRECHEN;");
 
             AnfrageObjekt.executeUpdate("CREATE TABLE PERSON(\n" +
                     "  PersonenID INTEGER PRIMARY KEY,\n" +

@@ -563,4 +563,23 @@ public class PolizistAnsichtManager {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
         }
     }
+
+    public void ZeigeSuchResultate(ResultSet R) {
+        Hauptprogramm.setMittlereAnsicht(getPolizistAnsicht());
+        PolizistDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = R;
+            while (AnfrageAntwort.next()) {
+                String Todesdatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    Todesdatum = AnfrageAntwort.getString(6);
+                }
+                PolizistDatenListe.add(new PolizistDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), Todesdatum, AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

@@ -151,6 +151,7 @@ public class BezirkAnsichtManager {
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheLage.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane

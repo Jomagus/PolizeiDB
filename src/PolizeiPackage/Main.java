@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.sqlite.core.DB;
 
 import java.sql.SQLException;
 
@@ -48,7 +47,6 @@ public class Main extends Application {
         // Initialisiere benoetigte Subsysteme
         IEM = new InfoErrorManager();
         DBH = new DatenbankHandler(IEM);
-        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage);
         ArtAM = new ArtAnsichtManager(DBH, IEM, this);
         FallAM = new FallAnsichtManager(DBH, IEM, this);
         VerbrechenAM = new VerbrechenAnsichtManager(DBH, IEM, this);
@@ -63,6 +61,8 @@ public class Main extends Application {
         ArbeitenAM = new ArbeitenAnsichtManager(DBH, IEM, this);
         ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
         LageAM = new LageAnsichtManager(DBH, IEM, this);
+
+        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage, DBH, IEM, PolizistAM);
 
         ArbeitenAnAM.setFallAM(FallAM);
         ArbeitenAnAM.setPolizistAM(PolizistAM);
