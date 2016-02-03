@@ -31,6 +31,8 @@ public class BehoerdenAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<BehoerdenDaten> BehoerdenDatenListe;
     private boolean BehoerdenAnsichtGeneriert;
+    private ArbeitenAnsichtManager ArbeitenAM;
+    private BezirkAnsichtManager BezirkAM;
 
     public BehoerdenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +41,14 @@ public class BehoerdenAnsichtManager {
         BehoerdenDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         BehoerdenAnsichtGeneriert = false;
+    }
+
+    public void setBezirkAM(BezirkAnsichtManager bezirkAM) {
+        BezirkAM = bezirkAM;
+    }
+
+    public void setArbeitenAM(ArbeitenAnsichtManager arbeitenAM) {
+        ArbeitenAM = arbeitenAM;
     }
 
     public Node getBehoerdenAnsicht() {
@@ -113,7 +123,7 @@ public class BehoerdenAnsichtManager {
     }
 
     private void erzeugeDetailAnsicht(BehoerdenDaten SpaltenDaten) {
-        Label LabelA = new Label("BehoerdenID");
+        Label LabelA = new Label("BehördenID");
         Label LabelAWert = new Label(Integer.toString(SpaltenDaten.getBehoerdenID()));
 
         Label LabelB = new Label("Name");
@@ -131,8 +141,8 @@ public class BehoerdenAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheBehoerdenId = new Button("Suche nach Vorkommen von BehoerdenID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
+        Button ButtonSucheBehoerdenId = new Button("Suche nach Angestellten");
+        Button ButtonSucheBezirksId = new Button("Suche nach Bezirk");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -147,10 +157,14 @@ public class BehoerdenAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheBehoerdenId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            ArbeitenAM.SucheNachBehoerdenID(SpaltenDaten.getBehoerdenID());
+        });
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BezirkAM.SucheBezirk(SpaltenDaten.getVerantwortlichBezirksID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -417,6 +431,22 @@ public class BehoerdenAnsichtManager {
         try {
             AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT BehördenID, BEHÖRDE.Name, Typ, verantwortlich_für_BezirksID, BEZIRK.Name " +
                     "FROM BEHÖRDE, BEZIRK WHERE verantwortlich_für_BezirksID = BEZIRK.BezirksID AND verantwortlich_für_BezirksID = " + BezirksID);
+            while (AnfrageAntwort.next()) {
+                BehoerdenDatenListe.add(new BehoerdenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getString(5)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
+
+    public void SucheNachBehoercde(int BehoerdenID) {
+        Hauptprogramm.setMittlereAnsicht(getBehoerdenAnsicht());
+        BehoerdenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT BehördenID, BEHÖRDE.Name, Typ, verantwortlich_für_BezirksID, BEZIRK.Name " +
+                    "FROM BEHÖRDE, BEZIRK WHERE verantwortlich_für_BezirksID = BEZIRK.BezirksID AND BehördenID = " + BehoerdenID);
             while (AnfrageAntwort.next()) {
                 BehoerdenDatenListe.add(new BehoerdenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
                         AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getString(5)));

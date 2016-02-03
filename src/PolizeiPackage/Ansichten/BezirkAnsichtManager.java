@@ -31,6 +31,8 @@ public class BezirkAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<BezirkDaten> BezirkDatenListe;
     private boolean BezirkAnsichtGeneriert;
+    private BehoerdenAnsichtManager BehAM;
+    private LageAnsichtManager LageAM;
 
     public BezirkAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +41,14 @@ public class BezirkAnsichtManager {
         BezirkDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         BezirkAnsichtGeneriert = false;
+    }
+
+    public void setBehAM(BehoerdenAnsichtManager behAM) {
+        BehAM = behAM;
+    }
+
+    public void setLageAM(LageAnsichtManager lageAM) {
+        LageAM = lageAM;
     }
 
     public Node getBezirkAnsicht() {
@@ -109,7 +119,8 @@ public class BezirkAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
+        Button ButtonSucheBezirksId = new Button("Suche nach zuständiger Behörde");
+        Button ButtonSucheLage = new Button("Suche nach Lagedaten");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -124,10 +135,14 @@ public class BezirkAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BehAM.SucheNachBezirk(SpaltenDaten.getBezirksID());
+        });
+        ButtonSucheLage.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            LageAM.SucheLageDaten(SpaltenDaten.getBezirksID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -154,7 +169,7 @@ public class BezirkAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonSucheLage, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

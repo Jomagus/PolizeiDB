@@ -32,6 +32,8 @@ public class NotizAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<NotizDaten> NotizDatenListe;
     private boolean NotizAnsichtGeneriert;
+    private PolizistAnsichtManager PolizistAM;
+    private FallAnsichtManager FallAM;
 
     public NotizAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -40,6 +42,14 @@ public class NotizAnsichtManager {
         NotizDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         NotizAnsichtGeneriert = false;
+    }
+
+    public void setPolizistAM(PolizistAnsichtManager polizistAM) {
+        PolizistAM = polizistAM;
+    }
+
+    public void setFallAM(FallAnsichtManager fallAM) {
+        FallAM = fallAM;
     }
 
     public Node getNotizAnsicht() {
@@ -143,10 +153,8 @@ public class NotizAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheNotizsId = new Button("Suche nach Vorkommen von NotizsID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheFallId = new Button("Suche nach Fall");
+        Button ButtonSucheArtId = new Button("Suche nach Polizist");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -161,10 +169,14 @@ public class NotizAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheFallId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            FallAM.FallSuchAnsicht(SpaltenDaten.getFallID());
+        });
+        ButtonSucheArtId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PolizistAM.SucheNachPolizist(SpaltenDaten.getPersonenID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -172,8 +184,6 @@ public class NotizAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheNotizsId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
@@ -194,7 +204,7 @@ public class NotizAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheNotizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

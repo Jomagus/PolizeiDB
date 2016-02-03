@@ -33,7 +33,7 @@ public class ArbeitenAnAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<ArbeitenAnDaten> ArbeitenAnDatenListe;
     private boolean ArbeitenAnAnsichtGeneriert;
-    private PersonenAnsichtManager PersonenAM;
+    private PolizistAnsichtManager PolizistAM;
     private FallAnsichtManager FallAM;
 
     public ArbeitenAnAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
@@ -45,8 +45,8 @@ public class ArbeitenAnAnsichtManager {
         ArbeitenAnAnsichtGeneriert = false;
     }
 
-    public void setPersonenAM(PersonenAnsichtManager PAM) {
-        PersonenAM = PAM;
+    public void setPolizistAM(PolizistAnsichtManager PAM) {
+        PolizistAM = PAM;
     }
 
     public void setFallAM(FallAnsichtManager FAM) {
@@ -147,8 +147,8 @@ public class ArbeitenAnAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSuchePersonenID = new Button("Suche nach Vorkommen von PersonenID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
+        Button ButtonSuchePersonenID = new Button("Suche nach Polizist");
+        Button ButtonSucheFallId = new Button("Suche nach Fall");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -165,7 +165,7 @@ public class ArbeitenAnAnsichtManager {
         });
         ButtonSuchePersonenID.setOnAction(event -> {
             Hauptprogramm.setRechteAnsicht(null);
-            PersonenAM.PersonenSuchAnsicht(SpaltenDaten.getPersonenID());
+            PolizistAM.SucheNachPolizist(SpaltenDaten.getPersonenID());
         });
         ButtonSucheFallId.setOnAction(event -> {
             Hauptprogramm.setRechteAnsicht(null);

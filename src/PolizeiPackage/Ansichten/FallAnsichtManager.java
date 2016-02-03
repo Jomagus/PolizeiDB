@@ -133,7 +133,7 @@ public class FallAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
+        Button ButtonSucheFallId = new Button("Suche nach zugehörigen Verbrechen");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {

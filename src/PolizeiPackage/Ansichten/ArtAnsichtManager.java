@@ -123,7 +123,7 @@ public class ArtAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheArtID = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheArtID = new Button("Suche nach Verbrechen dieser Art");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {

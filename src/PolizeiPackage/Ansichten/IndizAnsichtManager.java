@@ -38,6 +38,8 @@ public class IndizAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<IndizDaten> IndizDatenListe;
     private boolean IndizAnsichtGeneriert;
+    private PolizistAnsichtManager PolizistAM;
+    private FallAnsichtManager FallAM;
 
     // unschoene Sachen fuer das Bild laden
     private File Bild;
@@ -52,6 +54,14 @@ public class IndizAnsichtManager {
         IndizAnsichtGeneriert = false;
         Bild = null;
         GeladenesBild = null;
+    }
+
+    public void setPolizistAM(PolizistAnsichtManager polizistAM) {
+        PolizistAM = polizistAM;
+    }
+
+    public void setFallAM(FallAnsichtManager fallAM) {
+        FallAM = fallAM;
     }
 
     public Node getIndizAnsicht() {
@@ -155,10 +165,8 @@ public class IndizAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheIndizsId = new Button("Suche nach Vorkommen von IndizsID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheFallId = new Button("Suche nach Fall");
+        Button ButtonSucheArtId = new Button("Suche nach Polizist");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ResultSet AntwortBild;
@@ -201,10 +209,14 @@ public class IndizAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheFallId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            FallAM.FallSuchAnsicht(SpaltenDaten.getFallID());
+        });
+        ButtonSucheArtId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PolizistAM.SucheNachPolizist(SpaltenDaten.getPersonenID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -212,8 +224,6 @@ public class IndizAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheIndizsId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
@@ -234,7 +244,7 @@ public class IndizAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, BildFenster, Unten, ButtonSucheIndizsId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, BildFenster, Unten, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

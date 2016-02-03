@@ -34,6 +34,9 @@ public class ArbeitenAnsichtManager {
     private ObservableList<ArbeitenDaten> ArbeitenDatenListe;
     private boolean ArbeitenAnsichtGeneriert;
 
+    private PolizistAnsichtManager PolizistAM;
+    private BehoerdenAnsichtManager BehoerdenAM;
+
     public ArbeitenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
         IM = IEM;
@@ -41,6 +44,14 @@ public class ArbeitenAnsichtManager {
         ArbeitenDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         ArbeitenAnsichtGeneriert = false;
+    }
+
+    public void setPolizistAM(PolizistAnsichtManager polizistAM) {
+        PolizistAM = polizistAM;
+    }
+
+    public void setBehoerdenAM(BehoerdenAnsichtManager behoerdenAM) {
+        BehoerdenAM = behoerdenAM;
     }
 
     public Node getArbeitenAnsicht() {
@@ -137,10 +148,8 @@ public class ArbeitenAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheArbeitensId = new Button("Suche nach Vorkommen von ArbeitensID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button SuchePolizist = new Button("Suche nach Polizist");
+        Button SucheBehoerde = new Button("Suche nach Behörde");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -155,21 +164,22 @@ public class ArbeitenAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
-
+        SuchePolizist.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PolizistAM.SucheNachPolizist(SpaltenDaten.getPersonenID());
+        });
+        SucheBehoerde.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BehoerdenAM.SucheNachBehoercde(SpaltenDaten.getBehordenID());
+        });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheArbeitensId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
+        SuchePolizist.setMaxWidth(Double.MAX_VALUE);
+        SucheBehoerde.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -188,7 +198,7 @@ public class ArbeitenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheArbeitensId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, SuchePolizist, SucheBehoerde, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -508,5 +518,21 @@ public class ArbeitenAnsichtManager {
             }
         });
         refreshArbeitenAnsicht();
+    }
+
+    public void SucheNachBehoerdenID(int BehID) {
+        Hauptprogramm.setMittlereAnsicht(getArbeitenAnsicht());
+        ArbeitenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN.PersonenID, PERSON.Name, ARBEITEN.BehördenID, BEHÖRDE.Name, von, bis " +
+                    "FROM ARBEITEN, PERSON, BEHÖRDE WHERE ARBEITEN.PersonenID = PERSON.PersonenID AND ARBEITEN.BehördenID = BEHÖRDE.BehördenID AND ARBEITEN.BehördenID = " + BehID);
+            while (AnfrageAntwort.next()) {
+                ArbeitenDatenListe.add(new ArbeitenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), AnfrageAntwort.getString(6)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 }

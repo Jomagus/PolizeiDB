@@ -65,10 +65,21 @@ public class Main extends Application {
         LageAM = new LageAnsichtManager(DBH, IEM, this);
 
         ArbeitenAnAM.setFallAM(FallAM);
-        ArbeitenAnAM.setPersonenAM(PersonenAM);
-
-
+        ArbeitenAnAM.setPolizistAM(PolizistAM);
+        ArbeitenAM.setBehoerdenAM(BehAM);
+        ArbeitenAM.setPolizistAM(PolizistAM);
         ArtAM.setVerbrechensManager(VerbrechenAM);
+        BehAM.setArbeitenAM(ArbeitenAM);
+        BehAM.setBezirkAM(BezirkAM);
+        BezirkAM.setBehAM(BehAM);
+        BezirkAM.setLageAM(LageAM);
+        IndizAM.setFallAM(FallAM);
+        IndizAM.setPolizistAM(PolizistAM);
+        LageAM.setBezirkAM(BezirkAM);
+        NotizAM.setFallAM(FallAM);
+        NotizAM.setPolizistAM(PolizistAM);
+
+
         FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
 
         // Setze die Primaere Stage

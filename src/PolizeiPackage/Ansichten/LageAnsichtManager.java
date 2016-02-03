@@ -31,6 +31,7 @@ public class LageAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<LageDaten> LageDatenListe;
     private boolean LageAnsichtGeneriert;
+    private BezirkAnsichtManager BezirkAM;
 
     public LageAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +40,10 @@ public class LageAnsichtManager {
         LageDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         LageAnsichtGeneriert = false;
+    }
+
+    public void setBezirkAM(BezirkAnsichtManager bezirkAM) {
+        BezirkAM = bezirkAM;
     }
 
     public Node getLageAnsicht() {
@@ -119,10 +124,8 @@ public class LageAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheLagesId = new Button("Suche nach Vorkommen von LagesID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheLagesId = new Button("Suche nach innerem Bezirk");
+        Button ButtonSucheBezirksId = new Button("Suche nach äußerem Bezirk");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -137,10 +140,14 @@ public class LageAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheLagesId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BezirkAM.SucheBezirk(SpaltenDaten.getInnenID());
+        });
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BezirkAM.SucheBezirk(SpaltenDaten.getAussenID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -150,8 +157,6 @@ public class LageAnsichtManager {
         ButtonLoeschen.setMinWidth(150);
         ButtonSucheLagesId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -170,7 +175,7 @@ public class LageAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheLagesId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheLagesId, ButtonSucheBezirksId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -430,5 +435,23 @@ public class LageAnsichtManager {
             }
         });
         refreshLageAnsicht();
+    }
+
+    public void SucheLageDaten(int BezirksID) {
+        Hauptprogramm.setMittlereAnsicht(getLageAnsicht());
+        LageDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT innere_BezirksID, INNEN.Name, äußere_BezirksID, AUSSEN.NAME " +
+                    "FROM LIEGT_IN, BEZIRK AS INNEN, BEZIRK AS AUSSEN " +
+                    "WHERE AUSSEN.BezirksID = LIEGT_IN.äußere_BezirksID AND INNEN.BezirksID = LIEGT_IN.innere_BezirksID " +
+                    "AND (INNEN.BezirksID = "+ BezirksID +" OR AUSSEN.BezirksID = "+ BezirksID +");");
+            while (AnfrageAntwort.next()) {
+                LageDatenListe.add(new LageDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 }
