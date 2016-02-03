@@ -349,4 +349,18 @@ public class ArtAnsichtManager {
         });
         refreshArtAnsicht();
     }
+
+    public void SucheArt(int ArtID) {
+        Hauptprogramm.setMittlereAnsicht(getArtAnsicht());
+        ArtDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM ART WHERE ArtID = " + ArtID);
+            while (AnfrageAntwort.next()) {
+                ArtDatenListe.add(new ArtDaten(AnfrageAntwort.getInt("ArtID"), AnfrageAntwort.getString("Name"), AnfrageAntwort.getString("Beschreibung")));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

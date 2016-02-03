@@ -536,4 +536,44 @@ public class ArbeitenAnAnsichtManager {
         });
         refreshArbeitenAnAnsicht();
     }
+
+    public void SucheNachPersonenID(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getArbeitenAnAnsicht());
+        ArbeitenAnDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN_AN.PersonenID, PERSON.Name, ARBEITEN_AN.FallID, FALL.Name, ARBEITEN_AN.von, ARBEITEN_AN.bis " +
+                    "FROM ARBEITEN_AN, PERSON, FALL WHERE ARBEITEN_AN.FallID = FALL.FallID AND ARBEITEN_AN.PersonenID = PERSON.PersonenID AND ARBEITEN_AN.PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                String BisDatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    BisDatum = AnfrageAntwort.getString(6);
+                }
+                ArbeitenAnDatenListe.add(new ArbeitenAnDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), BisDatum));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
+
+    public void SucheNachFallID(int FallID) {
+        Hauptprogramm.setMittlereAnsicht(getArbeitenAnAnsicht());
+        ArbeitenAnDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN_AN.PersonenID, PERSON.Name, ARBEITEN_AN.FallID, FALL.Name, ARBEITEN_AN.von, ARBEITEN_AN.bis " +
+                    "FROM ARBEITEN_AN, PERSON, FALL WHERE ARBEITEN_AN.FallID = FALL.FallID AND ARBEITEN_AN.PersonenID = PERSON.PersonenID AND ARBEITEN_AN.FallID = " + FallID);
+            while (AnfrageAntwort.next()) {
+                String BisDatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    BisDatum = AnfrageAntwort.getString(6);
+                }
+                ArbeitenAnDatenListe.add(new ArbeitenAnDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), BisDatum));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

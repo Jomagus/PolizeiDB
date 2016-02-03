@@ -535,4 +535,20 @@ public class ArbeitenAnsichtManager {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
         }
     }
+
+    public void SucheNachPersonenID(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getArbeitenAnsicht());
+        ArbeitenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT ARBEITEN.PersonenID, PERSON.Name, ARBEITEN.BehördenID, BEHÖRDE.Name, von, bis " +
+                    "FROM ARBEITEN, PERSON, BEHÖRDE WHERE ARBEITEN.PersonenID = PERSON.PersonenID AND ARBEITEN.BehördenID = BEHÖRDE.BehördenID AND ARBEITEN.PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                ArbeitenDatenListe.add(new ArbeitenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), AnfrageAntwort.getString(6)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

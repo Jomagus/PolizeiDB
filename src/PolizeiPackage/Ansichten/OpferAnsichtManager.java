@@ -31,6 +31,8 @@ public class OpferAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<OpferDaten> OpferDatenListe;
     private boolean OpferAnsichtGeneriert;
+    private PersonenAnsichtManager PersonenAM;
+    private VerbrechenAnsichtManager VerbrechenAM;
 
     public OpferAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +41,14 @@ public class OpferAnsichtManager {
         OpferDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         OpferAnsichtGeneriert = false;
+    }
+
+    public void setPersonenAM(PersonenAnsichtManager personenAM) {
+        PersonenAM = personenAM;
+    }
+
+    public void setVerbrechenAM(VerbrechenAnsichtManager verbrechenAM) {
+        VerbrechenAM = verbrechenAM;
     }
 
     public Node getOpferAnsicht() {
@@ -121,10 +131,8 @@ public class OpferAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheOpfersId = new Button("Suche nach Vorkommen von OpfersID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheOpfersId = new Button("Suche nach Opfer");
+        Button ButtonSucheBezirksId = new Button("Suche nach Verbrechen");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -139,10 +147,14 @@ public class OpferAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheOpfersId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PersonenAM.PersonenSuchAnsicht(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            VerbrechenAM.SucheNachVerbrechen(SpaltenDaten.getVerbrechensID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -152,8 +164,6 @@ public class OpferAnsichtManager {
         ButtonLoeschen.setMinWidth(150);
         ButtonSucheOpfersId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -172,7 +182,7 @@ public class OpferAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheOpfersId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheOpfersId, ButtonSucheBezirksId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -432,6 +442,23 @@ public class OpferAnsichtManager {
             }
         });
         refreshOpferAnsicht();
+    }
+
+    public void SucheNachPerson(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getOpferAnsicht());
+        OpferDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT SIND_OPFER.PersonenID, PERSON.Name, SIND_OPFER.VerbrechensID, VERBRECHEN.Name " +
+                    "FROM SIND_OPFER, PERSON, VERBRECHEN " +
+                    "WHERE SIND_OPFER.PersonenID = PERSON.PersonenID AND SIND_OPFER.VerbrechensID = VERBRECHEN.VerbrechensID AND SIND_OPFER.PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                OpferDatenListe.add(new OpferDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
     }
 
     public void SucheNachVerbrechen(int VerbrechensID) {

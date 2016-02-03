@@ -34,6 +34,9 @@ public class FallAnsichtManager {
     private ObservableList<FallDaten> FallDatenListe;
     private boolean FallAnsichtGeneriert;
     private VerbrechenAnsichtManager VerAM;
+    private ArbeitenAnAnsichtManager ArbeitenAnAM;
+    private NotizAnsichtManager NotizAM;
+    private IndizAnsichtManager IndizAM;
 
     public FallAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -42,6 +45,18 @@ public class FallAnsichtManager {
         FallDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         FallAnsichtGeneriert = false;
+    }
+
+    public void setArbeitenAnAM(ArbeitenAnAnsichtManager arbeitenAnAM) {
+        ArbeitenAnAM = arbeitenAnAM;
+    }
+
+    public void setNotizAM(NotizAnsichtManager notizAM) {
+        NotizAM = notizAM;
+    }
+
+    public void setIndizAM(IndizAnsichtManager indizAM) {
+        IndizAM = indizAM;
     }
 
     public void setVerbrechenAnsichtManager(VerbrechenAnsichtManager VAM) {
@@ -134,6 +149,10 @@ public class FallAnsichtManager {
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
         Button ButtonSucheFallId = new Button("Suche nach zugehörigen Verbrechen");
+        Button ButtonSuchePolizist = new Button("Suche nach zugewiesenen Polizisten");
+        Button ButtonSucheNotiz = new Button("Suche nach angelegten Notizen");
+        Button ButtonSucheIndiz = new Button("Suche nach angelegten Indizien");
+
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -152,6 +171,19 @@ public class FallAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
             VerAM.SucheNachFall(SpaltenDaten.getFallID());
         });
+        ButtonSuchePolizist.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            ArbeitenAnAM.SucheNachFallID(SpaltenDaten.getFallID());
+        });
+        ButtonSucheNotiz.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            NotizAM.SucheNachFall(SpaltenDaten.getFallID());
+        });
+        ButtonSucheIndiz.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            IndizAM.SucheNachFall(SpaltenDaten.getFallID());
+        });
+
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
         ButtonBearbeiten.setMaxWidth(Double.MAX_VALUE);
@@ -159,6 +191,9 @@ public class FallAnsichtManager {
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSuchePolizist.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheNotiz.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheIndiz.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -177,7 +212,7 @@ public class FallAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheFallId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheFallId, ButtonSuchePolizist, ButtonSucheNotiz, ButtonSucheIndiz, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

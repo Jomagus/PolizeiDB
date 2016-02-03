@@ -33,6 +33,11 @@ public class PolizistAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<PolizistDaten> PolizistDatenListe;
     private boolean PolizistAnsichtGeneriert;
+    private PersonenAnsichtManager PersonenAM;
+    private ArbeitenAnsichtManager ArbeitenAM;
+    private ArbeitenAnAnsichtManager ArbeitenAnAM;
+    private NotizAnsichtManager NotizAM;
+    private IndizAnsichtManager IndizAM;
 
     public PolizistAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -41,6 +46,26 @@ public class PolizistAnsichtManager {
         PolizistDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         PolizistAnsichtGeneriert = false;
+    }
+
+    public void setIndizAM(IndizAnsichtManager indizAM) {
+        IndizAM = indizAM;
+    }
+
+    public void setPersonenAM(PersonenAnsichtManager personenAM) {
+        PersonenAM = personenAM;
+    }
+
+    public void setArbeitenAM(ArbeitenAnsichtManager arbeitenAM) {
+        ArbeitenAM = arbeitenAM;
+    }
+
+    public void setArbeitenAnAM(ArbeitenAnAnsichtManager arbeitenAnAM) {
+        ArbeitenAnAM = arbeitenAnAM;
+    }
+
+    public void setNotizAM(NotizAnsichtManager notizAM) {
+        NotizAM = notizAM;
     }
 
     public Node getPolizistAnsicht() {
@@ -156,8 +181,13 @@ public class PolizistAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSuchePolizistsId = new Button("Suche nach Vorkommen von PersonenID");
-        //TODO suchen nach Notizen, etc. alles ueber getrennte Buttons
+
+        Button ButtonSuchePerson = new Button("Suche nach Person");
+        Button ButtonSucheArbeit = new Button("Suche nach Arbeitsverhältnissen");
+        Button ButtonSucheArbeitAn = new Button("Suche nach zugewiesenen Fällen");
+        Button ButtonSucheNotizen = new Button("Suche nach erstellten Notizen");
+        Button ButtonSucheIndizien = new Button("Suche nach eingestellten Indizien");
+
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -173,9 +203,26 @@ public class PolizistAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
         });
 
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSuchePerson.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PersonenAM.PersonenSuchAnsicht(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheArbeit.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            ArbeitenAM.SucheNachPersonenID(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheArbeitAn.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            ArbeitenAnAM.SucheNachPersonenID(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheNotizen.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            NotizAM.SucheNachAnlegendem(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheIndizien.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            IndizAM.SucheNachAnlegendem(SpaltenDaten.getPersonenID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -183,7 +230,11 @@ public class PolizistAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSuchePolizistsId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSuchePerson.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheArbeit.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheArbeitAn.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheNotizen.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheIndizien.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -202,7 +253,7 @@ public class PolizistAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePolizistsId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePerson, ButtonSucheArbeit, ButtonSucheArbeitAn, ButtonSucheNotizen, ButtonSucheIndizien, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

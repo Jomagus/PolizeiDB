@@ -32,6 +32,9 @@ public class VerbrechenAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<VerbrechenDaten> VerbrechenDatenListe;
     private boolean VerbrechenAnsichtGeneriert;
+    private BezirkAnsichtManager BezirkAM;
+    private FallAnsichtManager FallAM;
+    private ArtAnsichtManager ArtAM;
 
     public VerbrechenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -40,6 +43,18 @@ public class VerbrechenAnsichtManager {
         VerbrechenDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         VerbrechenAnsichtGeneriert = false;
+    }
+
+    public void setBezirkAM(BezirkAnsichtManager bezirkAM) {
+        BezirkAM = bezirkAM;
+    }
+
+    public void setFallAM(FallAnsichtManager fallAM) {
+        FallAM = fallAM;
+    }
+
+    public void setArtAM(ArtAnsichtManager artAM) {
+        ArtAM = artAM;
     }
 
     public Node getVerbrechenAnsicht() {
@@ -156,10 +171,9 @@ public class VerbrechenAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheVerbrechensId = new Button("Suche nach Vorkommen von VerbrechensID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheBezirksId = new Button("Suche nach Bezirk");
+        Button ButtonSucheFallId = new Button("Suche nach Fall");
+        Button ButtonSucheArtId = new Button("Suche nach Art");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -174,10 +188,18 @@ public class VerbrechenAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            BezirkAM.SucheBezirk(SpaltenDaten.getBezirksID());
+        });
+        ButtonSucheFallId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            FallAM.FallSuchAnsicht(SpaltenDaten.getFallID());
+        });
+        ButtonSucheArtId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            ArtAM.SucheArt(SpaltenDaten.getArtID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -185,7 +207,6 @@ public class VerbrechenAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSucheVerbrechensId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
@@ -207,7 +228,7 @@ public class VerbrechenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheVerbrechensId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
@@ -598,6 +619,27 @@ public class VerbrechenAnsichtManager {
                     "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
                     "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.geschieht_in_BezirksID = ?");
             Anfrage.setInt(1, BezirksID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
+    }
+
+    public void SucheNachVerbrechen(int VerbrechensID) {
+        Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
+        VerbrechenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
+                    "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
+                    "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
+                    "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.VerbrechensID = ?");
+            Anfrage.setInt(1, VerbrechensID);
             AnfrageAntwort = Anfrage.executeQuery();
             while (AnfrageAntwort.next()) {
                 VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),

@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import sun.util.locale.provider.SPILocaleProviderAdapter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +34,8 @@ public class PersonenAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<PersonenDaten> PersonenDatenListe;
     private boolean PersonenAnsichtGeneriert;
+    private OpferAnsichtManager OpferAM;
+    private VerdachtigeAnsichtManager VerAM;
 
     public PersonenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -41,6 +44,14 @@ public class PersonenAnsichtManager {
         PersonenDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         PersonenAnsichtGeneriert = false;
+    }
+
+    public void setOpferAM(OpferAnsichtManager opferAM) {
+        OpferAM = opferAM;
+    }
+
+    public void setVerAM(VerdachtigeAnsichtManager verAM) {
+        VerAM = verAM;
     }
 
     public Node getPersonenAnsicht() {
@@ -147,10 +158,10 @@ public class PersonenAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSuchePersonensId = new Button("Suche nach Vorkommen von PersonenID");
+        Button ButtonSucheOpfer = new Button("Suche nach Rolle als Opfer");
+        Button ButtonSucheVerd = new Button("Suche nach Rolle als Verdächtiger");
+        Button ButtonPromote = new Button("Mache zum Polizisten");
         Button ButtonClose = new Button("Detailansicht verlassen");
-
-        //TODO einen zum Polizisten mach knopf einfuegen
 
         ButtonBearbeiten.setOnAction(event -> {
             Tabelle.getSelectionModel().clearSelection();
@@ -164,10 +175,15 @@ public class PersonenAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheOpfer.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            OpferAM.SucheNachPerson(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheVerd.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            VerAM.SuchePerson(SpaltenDaten.getPersonenID());
+        });
+        ButtonPromote.setOnAction(event -> {}); //TODO einen zum Polizisten mach knopf einfuegen
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -175,7 +191,9 @@ public class PersonenAnsichtManager {
         ButtonBearbeiten.setMinWidth(150);
         ButtonLoeschen.setMaxWidth(Double.MAX_VALUE);
         ButtonLoeschen.setMinWidth(150);
-        ButtonSuchePersonensId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheOpfer.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheVerd.setMaxWidth(Double.MAX_VALUE);
+        ButtonPromote.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -194,7 +212,7 @@ public class PersonenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSuchePersonensId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheOpfer, ButtonSucheVerd, ButtonPromote, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

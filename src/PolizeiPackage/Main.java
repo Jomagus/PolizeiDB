@@ -73,14 +73,29 @@ public class Main extends Application {
         BehAM.setBezirkAM(BezirkAM);
         BezirkAM.setBehAM(BehAM);
         BezirkAM.setLageAM(LageAM);
+        FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
+        FallAM.setArbeitenAnAM(ArbeitenAnAM);
+        FallAM.setIndizAM(IndizAM);
+        FallAM.setNotizAM(NotizAM);
         IndizAM.setFallAM(FallAM);
         IndizAM.setPolizistAM(PolizistAM);
         LageAM.setBezirkAM(BezirkAM);
         NotizAM.setFallAM(FallAM);
         NotizAM.setPolizistAM(PolizistAM);
-
-
-        FallAM.setVerbrechenAnsichtManager(VerbrechenAM);
+        OpferAM.setPersonenAM(PersonenAM);
+        OpferAM.setVerbrechenAM(VerbrechenAM);
+        PersonenAM.setOpferAM(OpferAM);
+        PersonenAM.setVerAM(VerdachtigeAM);
+        PolizistAM.setArbeitenAM(ArbeitenAM);
+        PolizistAM.setArbeitenAnAM(ArbeitenAnAM);
+        PolizistAM.setIndizAM(IndizAM);
+        PolizistAM.setNotizAM(NotizAM);
+        PolizistAM.setPersonenAM(PersonenAM);
+        VerbrechenAM.setArtAM(ArtAM);
+        VerbrechenAM.setBezirkAM(BezirkAM);
+        VerbrechenAM.setFallAM(FallAM);
+        VerdachtigeAM.setPersonenAM(PersonenAM);
+        VerdachtigeAM.setVerbrechenAM(VerbrechenAM);
 
         // Setze die Primaere Stage
         PrimaereStage = primaryStage;

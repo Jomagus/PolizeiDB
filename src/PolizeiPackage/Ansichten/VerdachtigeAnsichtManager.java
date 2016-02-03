@@ -31,6 +31,8 @@ public class VerdachtigeAnsichtManager {
     private BorderPane DatenAnsicht;
     private ObservableList<VerdachtigeDaten> VerdachtigeDatenListe;
     private boolean VerdachtigeAnsichtGeneriert;
+    private VerbrechenAnsichtManager VerbrechenAM;
+    private PersonenAnsichtManager PersonenAM;
 
     public VerdachtigeAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -39,6 +41,14 @@ public class VerdachtigeAnsichtManager {
         VerdachtigeDatenListe = FXCollections.observableArrayList();
         Tabelle = new TableView<>();
         VerdachtigeAnsichtGeneriert = false;
+    }
+
+    public void setVerbrechenAM(VerbrechenAnsichtManager verbrechenAM) {
+        VerbrechenAM = verbrechenAM;
+    }
+
+    public void setPersonenAM(PersonenAnsichtManager personenAM) {
+        PersonenAM = personenAM;
     }
 
     public Node getVerdachtigeAnsicht() {
@@ -130,10 +140,8 @@ public class VerdachtigeAnsichtManager {
 
         Button ButtonBearbeiten = new Button("Bearbeiten...");
         Button ButtonLoeschen = new Button("Löschen");
-        Button ButtonSucheVerdachtigesId = new Button("Suche nach Vorkommen von VerdachtigesID");
-        Button ButtonSucheBezirksId = new Button("Suche nach Vorkommen von BezirksID");
-        Button ButtonSucheFallId = new Button("Suche nach Vorkommen von FallID");
-        Button ButtonSucheArtId = new Button("Suche nach Vorkommen von ArtID");
+        Button ButtonSucheVerdachtigesId = new Button("Suche nach Verdächtigem");
+        Button ButtonSucheBezirksId = new Button("Suche nach Verbrechen");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -148,10 +156,14 @@ public class VerdachtigeAnsichtManager {
             deleteSelectedEntrys();
             Hauptprogramm.setRechteAnsicht(null);
         });
-
-
-        //TODO eventhandler fuer die Such Buttons
-
+        ButtonSucheVerdachtigesId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            PersonenAM.PersonenSuchAnsicht(SpaltenDaten.getPersonenID());
+        });
+        ButtonSucheBezirksId.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            VerbrechenAM.SucheNachVerbrechen(SpaltenDaten.getVerbrechensID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -161,8 +173,6 @@ public class VerdachtigeAnsichtManager {
         ButtonLoeschen.setMinWidth(150);
         ButtonSucheVerdachtigesId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
-        ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -181,7 +191,7 @@ public class VerdachtigeAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheVerdachtigesId, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheVerdachtigesId, ButtonSucheBezirksId, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 
