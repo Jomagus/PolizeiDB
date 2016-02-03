@@ -150,7 +150,7 @@ public class FallAnsichtManager {
         });
         ButtonSucheFallId.setOnAction(event -> {
             Hauptprogramm.setRechteAnsicht(null);
-            VerAM.FallAnsichtQuer(SpaltenDaten.getFallID());
+            VerAM.SucheNachFall(SpaltenDaten.getFallID());
         });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 

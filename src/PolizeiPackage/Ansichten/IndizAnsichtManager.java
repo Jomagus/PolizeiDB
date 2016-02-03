@@ -578,4 +578,48 @@ public class IndizAnsichtManager {
         PopUp.setScene(new Scene(Aussen));
         PopUp.showAndWait();
     }
+
+    public void SucheNachAnlegendem(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getIndizAnsicht());
+        IndizDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        String Text;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT IndizID, Indiz.Datum, Indiz.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
+                    "FROM Indiz, PERSON, FALL WHERE angelegt_zu_FallID = FALL.FallID AND angelegt_von_PersonenID = PersonenID AND PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                Text = "";
+                if (AnfrageAntwort.getObject(3) != null) {
+                    Text = AnfrageAntwort.getString(3);
+                }
+                IndizDatenListe.add(new IndizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        Text, AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getString(6),
+                        AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
+
+    public void SucheNachFall(int FallID) {
+        Hauptprogramm.setMittlereAnsicht(getIndizAnsicht());
+        IndizDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        String Text;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT IndizID, Indiz.Datum, Indiz.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
+                    "FROM Indiz, PERSON, FALL WHERE angelegt_zu_FallID = FALL.FallID AND angelegt_von_PersonenID = PersonenID AND angelegt_zu_FallID = " + FallID);
+            while (AnfrageAntwort.next()) {
+                Text = "";
+                if (AnfrageAntwort.getObject(3) != null) {
+                    Text = AnfrageAntwort.getString(3);
+                }
+                IndizDatenListe.add(new IndizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        Text, AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getString(6),
+                        AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

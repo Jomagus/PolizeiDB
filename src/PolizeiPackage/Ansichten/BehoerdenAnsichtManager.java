@@ -409,4 +409,20 @@ public class BehoerdenAnsichtManager {
         });
         refreshBehoerdenAnsicht();
     }
+
+    public void SucheNachBezirk(int BezirksID) {
+        Hauptprogramm.setMittlereAnsicht(getBehoerdenAnsicht());
+        BehoerdenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT BehördenID, BEHÖRDE.Name, Typ, verantwortlich_für_BezirksID, BEZIRK.Name " +
+                    "FROM BEHÖRDE, BEZIRK WHERE verantwortlich_für_BezirksID = BEZIRK.BezirksID AND verantwortlich_für_BezirksID = " + BezirksID);
+            while (AnfrageAntwort.next()) {
+                BehoerdenDatenListe.add(new BehoerdenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getString(5)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

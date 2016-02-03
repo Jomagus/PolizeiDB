@@ -326,4 +326,18 @@ public class BezirkAnsichtManager {
         });
         refreshBezirkAnsicht();
     }
+
+    public void SucheBezirk(int BezirksID) {
+        Hauptprogramm.setMittlereAnsicht(getBezirkAnsicht());
+        BezirkDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT * FROM BEZIRK WHERE BezirksID = " + BezirksID);
+            while (AnfrageAntwort.next()) {
+                BezirkDatenListe.add(new BezirkDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

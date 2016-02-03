@@ -476,4 +476,38 @@ public class NotizAnsichtManager {
         });
         refreshNotizAnsicht();
     }
+
+    public void SucheNachAnlegendem(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getNotizAnsicht());
+        NotizDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT NotizID, NOTIZ.Datum, NOTIZ.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
+                    "FROM NOTIZ, PERSON, FALL WHERE angelegt_zu_FallID = FALL.FallID AND angelegt_von_PersonenID = PersonenID AND PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                NotizDatenListe.add(new NotizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getString(6),
+                        AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
+
+    public void SucheNachFall(int FallID) {
+        Hauptprogramm.setMittlereAnsicht(getNotizAnsicht());
+        NotizDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT NotizID, NOTIZ.Datum, NOTIZ.Text, angelegt_von_PersonenID, angelegt_zu_FallID, PERSON.Name, FALL.Name " +
+                    "FROM NOTIZ, PERSON, FALL WHERE angelegt_zu_FallID = FALL.FallID AND angelegt_von_PersonenID = PersonenID AND angelegt_zu_FallID = " + FallID);
+            while (AnfrageAntwort.next()) {
+                NotizDatenListe.add(new NotizDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getString(6),
+                        AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

@@ -433,4 +433,21 @@ public class OpferAnsichtManager {
         });
         refreshOpferAnsicht();
     }
+
+    public void SucheNachVerbrechen(int VerbrechensID) {
+        Hauptprogramm.setMittlereAnsicht(getOpferAnsicht());
+        OpferDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT SIND_OPFER.PersonenID, PERSON.Name, SIND_OPFER.VerbrechensID, VERBRECHEN.Name " +
+                    "FROM SIND_OPFER, PERSON, VERBRECHEN " +
+                    "WHERE SIND_OPFER.PersonenID = PERSON.PersonenID AND SIND_OPFER.VerbrechensID = VERBRECHEN.VerbrechensID AND SIND_OPFER.VerbrechensID = " + VerbrechensID);
+            while (AnfrageAntwort.next()) {
+                OpferDatenListe.add(new OpferDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

@@ -492,4 +492,24 @@ public class PolizistAnsichtManager {
         });
         refreshPolizistAnsicht();
     }
+
+    public void SucheNachPolizist(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getPolizistAnsicht());
+        PolizistDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT PERSON.PersonenID, PERSON.Name, PERSON.Geburtsdatum, PERSON.Nationalität, PERSON.Geschlecht, PERSON.Todesdatum, POLIZIST.Dienstgrad " +
+                    "FROM PERSON, POLIZIST WHERE PERSON.PersonenID = POLIZIST.PersonenID AND POLIZIST.PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                String Todesdatum = "";
+                if (AnfrageAntwort.getObject(6) != null) {
+                    Todesdatum = AnfrageAntwort.getString(6);
+                }
+                PolizistDatenListe.add(new PolizistDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getString(4), AnfrageAntwort.getString(5), Todesdatum, AnfrageAntwort.getString(7)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

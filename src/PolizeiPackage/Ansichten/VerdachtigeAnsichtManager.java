@@ -455,4 +455,38 @@ public class VerdachtigeAnsichtManager {
         });
         refreshVerdachtigeAnsicht();
     }
+
+    public void SuchePerson(int PersonenID) {
+        Hauptprogramm.setMittlereAnsicht(getVerdachtigeAnsicht());
+        VerdachtigeDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT SIND_VERDÄCHTIGE.PersonenID, PERSON.Name, SIND_VERDÄCHTIGE.VerbrechensID, VERBRECHEN.Name, SIND_VERDÄCHTIGE.Überführt " +
+                    "FROM SIND_VERDÄCHTIGE, PERSON, VERBRECHEN " +
+                    "WHERE SIND_VERDÄCHTIGE.PersonenID = PERSON.PersonenID AND SIND_VERDÄCHTIGE.VerbrechensID = VERBRECHEN.VerbrechensID AND SIND_VERDÄCHTIGE.PersonenID = " + PersonenID);
+            while (AnfrageAntwort.next()) {
+                VerdachtigeDatenListe.add(new VerdachtigeDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getBoolean(5)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
+
+    public void SucheVerbrechen(int VerbrechensID) {
+        Hauptprogramm.setMittlereAnsicht(getVerdachtigeAnsicht());
+        VerdachtigeDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT SIND_VERDÄCHTIGE.PersonenID, PERSON.Name, SIND_VERDÄCHTIGE.VerbrechensID, VERBRECHEN.Name, SIND_VERDÄCHTIGE.Überführt " +
+                    "FROM SIND_VERDÄCHTIGE, PERSON, VERBRECHEN " +
+                    "WHERE SIND_VERDÄCHTIGE.PersonenID = PERSON.PersonenID AND SIND_VERDÄCHTIGE.VerbrechensID = VERBRECHEN.VerbrechensID AND SIND_VERDÄCHTIGE.VerbrechensID = " + VerbrechensID);
+            while (AnfrageAntwort.next()) {
+                VerdachtigeDatenListe.add(new VerdachtigeDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getBoolean(5)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

@@ -546,7 +546,7 @@ public class VerbrechenAnsichtManager {
      *
      * @param ArtID Die ArtID der Darzustellenden Verbrechen
      */
-    public void ArtAnsichtQuer(int ArtID) {
+    public void SucheNachArt(int ArtID) {
         Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
         VerbrechenDatenListe.clear();
         ResultSet AnfrageAntwort;
@@ -567,7 +567,7 @@ public class VerbrechenAnsichtManager {
         }
     }
 
-    public void FallAnsichtQuer(int FallID) {
+    public void SucheNachFall(int FallID) {
         Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
         VerbrechenDatenListe.clear();
         ResultSet AnfrageAntwort;
@@ -577,6 +577,27 @@ public class VerbrechenAnsichtManager {
                     "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
                     "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.gehört_zu_FallID = ?");
             Anfrage.setInt(1, FallID);
+            AnfrageAntwort = Anfrage.executeQuery();
+            while (AnfrageAntwort.next()) {
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
+        }
+    }
+
+    public void SucheNachBezirk(int BezirksID) {
+        Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
+        VerbrechenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            PreparedStatement Anfrage = DH.prepareStatement("SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID,\n" +
+                    "  BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName\n" +
+                    "FROM VERBRECHEN, BEZIRK, FALL, ART\n" +
+                    "WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID AND VERBRECHEN.geschieht_in_BezirksID = ?");
+            Anfrage.setInt(1, BezirksID);
             AnfrageAntwort = Anfrage.executeQuery();
             while (AnfrageAntwort.next()) {
                 VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),

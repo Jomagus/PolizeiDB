@@ -140,7 +140,7 @@ public class ArtAnsichtManager {
         });
         ButtonSucheArtID.setOnAction(event -> {
             Hauptprogramm.setRechteAnsicht(null);
-            VerAM.ArtAnsichtQuer(SpaltenDaten.getArtID());
+            VerAM.SucheNachArt(SpaltenDaten.getArtID());
         });
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
