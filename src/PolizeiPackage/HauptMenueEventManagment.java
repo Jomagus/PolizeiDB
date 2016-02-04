@@ -2,6 +2,7 @@ package PolizeiPackage;
 
 import PolizeiPackage.Ansichten.OpferAnsichtManager;
 import PolizeiPackage.Ansichten.PolizistAnsichtManager;
+import PolizeiPackage.Ansichten.VerdachtigeAnsichtManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,18 +28,20 @@ public class HauptMenueEventManagment {
     private DatenbankHandler DH;
     private InfoErrorManager IM;
     private OpferAnsichtManager OpferAM;
+    private VerdachtigeAnsichtManager VerdaechtigeAM;
 
     /**
      * Initialisiert einen EventManager fuers Hauptmenue
      *
      * @param VaterStage Die Stage mit dem Hauptmenue
      */
-    public HauptMenueEventManagment(Stage VaterStage, DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM) {
+    public HauptMenueEventManagment(Stage VaterStage, DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM, VerdachtigeAnsichtManager VAM) {
         this.PrimaereStage = VaterStage;
         DH = DBH;
         PolizistAM = PAM;
         IM = IEM;
         OpferAM = OAM;
+        VerdaechtigeAM = VAM;
     }
 
     public void FilterSubMenue() {
@@ -260,9 +263,6 @@ public class HauptMenueEventManagment {
             String VerbrechenName = LabelFWert.getText().isEmpty() ? "%" : LabelFWert.getText();
             String VerbrechensID = LabelGWert.getText().isEmpty() ? "%" : LabelGWert.getText();
 
-            System.out.println(PersonenID);
-            System.out.println(VerbrechensID);
-
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
                 InsertStatement.setString(1, PersonenName);
@@ -283,6 +283,125 @@ public class HauptMenueEventManagment {
     }
 
     public void SuchenVerdaechtige() {
+        Stage PopUp = new Stage();
+        PopUp.initModality(Modality.APPLICATION_MODAL);
+        PopUp.setTitle("Suche Verdächtige");
+        PopUp.setAlwaysOnTop(true);
+        PopUp.setResizable(false);
 
+        GridPane Gitter = new GridPane();
+        Gitter.setHgap(10);
+        Gitter.setVgap(10);
+
+        Label LabelD = new Label("Verdächtige");
+        TextField LabelDWert = new TextField();
+
+        Label LabelE = new Label("PersonenID");
+        TextField LabelEWert = new TextField();
+
+        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM PERSON WHERE PersonenID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelDWert.setText(Antwort.getString(1));
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {}
+        }));
+
+        Label LabelF = new Label("Verbrechen");
+        TextField LabelFWert = new TextField();
+
+        Label LabelG = new Label("VerbrechensID");
+        TextField LabelGWert = new TextField();
+
+        LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM VERBRECHEN WHERE VerbrechensID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelFWert.setText(Antwort.getString(1));
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {}
+        }));
+
+        Label LabelI = new Label("Überführt");
+        CheckBox LabelIWert = new CheckBox();
+        LabelIWert.setAllowIndeterminate(true);
+        LabelIWert.setIndeterminate(true);
+
+        Button ButtonFort = new Button("Fortfahren");
+        Button ButtonAbb = new Button("Abbrechen");
+
+        ButtonFort.defaultButtonProperty();
+        ButtonAbb.cancelButtonProperty();
+
+        ButtonFort.setMaxWidth(Double.MAX_VALUE);
+        ButtonAbb.setMaxWidth(Double.MAX_VALUE);
+
+        Gitter.addColumn(0, LabelD, LabelE, LabelF, LabelG, LabelI);
+        Gitter.addColumn(1, LabelDWert, LabelEWert, LabelFWert, LabelGWert, LabelIWert);
+
+        VBox AussenBox = new VBox(10);
+        HBox InnenBox = new HBox();
+
+        AussenBox.setSpacing(10);
+        AussenBox.setPadding(new Insets(10));
+        InnenBox.setSpacing(10);
+
+        AussenBox.setAlignment(Pos.CENTER);
+        InnenBox.setAlignment(Pos.BOTTOM_CENTER);
+
+        AussenBox.getChildren().addAll(Gitter, InnenBox);
+        InnenBox.getChildren().addAll(ButtonFort, ButtonAbb);
+
+        ButtonAbb.setOnAction(event -> PopUp.close());
+        ButtonFort.setOnAction(event -> {
+            String SQLString;
+            ResultSet Results = null;
+
+            String PersonenName = LabelDWert.getText().isEmpty() ? "%" : LabelDWert.getText();
+            String PersonenID = LabelEWert.getText().isEmpty() ? "%" : LabelEWert.getText();
+            String VerbrechenName = LabelFWert.getText().isEmpty() ? "%" : LabelFWert.getText();
+            String VerbrechensID = LabelGWert.getText().isEmpty() ? "%" : LabelGWert.getText();
+            Boolean Uberfuhrt = true;
+
+            if (LabelIWert.isIndeterminate()) {
+                SQLString = "SELECT SIND_VERDÄCHTIGE.PersonenID, PERSON.Name, SIND_VERDÄCHTIGE.VerbrechensID, VERBRECHEN.Name, SIND_VERDÄCHTIGE.Überführt " +
+                        "FROM SIND_VERDÄCHTIGE, PERSON, VERBRECHEN WHERE SIND_VERDÄCHTIGE.PersonenID = PERSON.PersonenID AND SIND_VERDÄCHTIGE.VerbrechensID = VERBRECHEN.VerbrechensID " +
+                        "AND SIND_VERDÄCHTIGE.PersonenID LIKE ? AND PERSON.Name LIKE ? AND SIND_VERDÄCHTIGE.VerbrechensID LIKE ? AND VERBRECHEN.Name LIKE ?;";
+            } else {
+                Uberfuhrt = LabelIWert.isSelected();
+                SQLString = "SELECT SIND_VERDÄCHTIGE.PersonenID, PERSON.Name, SIND_VERDÄCHTIGE.VerbrechensID, VERBRECHEN.Name, SIND_VERDÄCHTIGE.Überführt " +
+                        "FROM SIND_VERDÄCHTIGE, PERSON, VERBRECHEN WHERE SIND_VERDÄCHTIGE.PersonenID = PERSON.PersonenID AND SIND_VERDÄCHTIGE.VerbrechensID = VERBRECHEN.VerbrechensID " +
+                        "AND SIND_VERDÄCHTIGE.PersonenID LIKE ? AND PERSON.Name LIKE ? AND SIND_VERDÄCHTIGE.VerbrechensID LIKE ? AND VERBRECHEN.Name LIKE ? AND SIND_VERDÄCHTIGE.Überführt = ?;";
+            }
+
+            try {
+                PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
+                InsertStatement.setString(1, PersonenName);
+                InsertStatement.setString(2, PersonenID);
+                InsertStatement.setString(3, VerbrechenName);
+                InsertStatement.setString(4, VerbrechensID);
+                if (!LabelIWert.isIndeterminate()) {
+                    InsertStatement.setBoolean(5, Uberfuhrt);
+                }
+                Results = InsertStatement.executeQuery();
+                IM.setInfoText("Suchanfrage durchgeführt");
+            } catch (SQLException e) {
+                IM.setErrorText("Suchanfrage Fehlgeschlagen", e);
+            }
+            VerdaechtigeAM.ZeigeSuchResultate(Results);
+            PopUp.close();
+        });
+
+        PopUp.setScene(new Scene(AussenBox));
+        PopUp.showAndWait();
     }
 }

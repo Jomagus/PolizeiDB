@@ -499,4 +499,19 @@ public class VerdachtigeAnsichtManager {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
         }
     }
+
+    public void ZeigeSuchResultate(ResultSet R) {
+        Hauptprogramm.setMittlereAnsicht(getVerdachtigeAnsicht());
+        VerdachtigeDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = R;
+            while (AnfrageAntwort.next()) {
+                VerdachtigeDatenListe.add(new VerdachtigeDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4), AnfrageAntwort.getBoolean(5)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }
