@@ -477,4 +477,19 @@ public class OpferAnsichtManager {
             IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
         }
     }
+
+    public void ZeigeSuchResultate(ResultSet R) {
+        Hauptprogramm.setMittlereAnsicht(getOpferAnsicht());
+        OpferDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = R;
+            while (AnfrageAntwort.next()) {
+                OpferDatenListe.add(new OpferDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }

@@ -62,7 +62,7 @@ public class Main extends Application {
         ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
         LageAM = new LageAnsichtManager(DBH, IEM, this);
 
-        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage, DBH, IEM, PolizistAM);
+        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage, DBH, IEM, PolizistAM, OpferAM);
 
         ArbeitenAnAM.setFallAM(FallAM);
         ArbeitenAnAM.setPolizistAM(PolizistAM);
