@@ -385,10 +385,10 @@ public class HauptMenueEventManagment {
 
             try {
                 PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
-                InsertStatement.setString(1, PersonenName);
-                InsertStatement.setString(2, PersonenID);
-                InsertStatement.setString(3, VerbrechenName);
-                InsertStatement.setString(4, VerbrechensID);
+                InsertStatement.setString(1, PersonenID);
+                InsertStatement.setString(2, PersonenName);
+                InsertStatement.setString(3, VerbrechensID);
+                InsertStatement.setString(4, VerbrechenName);
                 if (!LabelIWert.isIndeterminate()) {
                     InsertStatement.setBoolean(5, Uberfuhrt);
                 }
