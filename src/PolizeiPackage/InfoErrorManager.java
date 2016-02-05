@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * Gibt dem Nutzer aktuelle Informationen ueber die Fussleiste aus.
  */
-public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erzeugen
+public class InfoErrorManager {
     private Label InfoLabel;
     private Label RechtesLabel;
     private AnchorPane FussLeiste;
@@ -75,7 +75,6 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
      * @param Nachricht Die Nachricht fuer das Log
      */
     public void resetText(String Nachricht) {
-        // TODO Nachricht loggen
         resetText();
     }
 }

@@ -24,7 +24,6 @@ import java.time.LocalDate;
  * Verwaltet Hauptmenueevents
  */
 public class HauptMenueEventManagment {
-    private Stage PrimaereStage;
     private PolizistAnsichtManager PolizistAM;
     private DatenbankHandler DH;
     private InfoErrorManager IM;
@@ -35,10 +34,8 @@ public class HauptMenueEventManagment {
     /**
      * Initialisiert einen EventManager fuers Hauptmenue
      *
-     * @param VaterStage Die Stage mit dem Hauptmenue
      */
-    public HauptMenueEventManagment(Stage VaterStage, DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM, VerdachtigeAnsichtManager VAM, VerbrechenAnsichtManager VerA) {
-        this.PrimaereStage = VaterStage;
+    public HauptMenueEventManagment(DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM, VerdachtigeAnsichtManager VAM, VerbrechenAnsichtManager VerA) {
         DH = DBH;
         PolizistAM = PAM;
         IM = IEM;
@@ -66,7 +63,7 @@ public class HauptMenueEventManagment {
         Label LabelE = new Label("ArtID");
         TextField LabelEWert = new TextField();
 
-        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+        LabelEWert.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM ART WHERE ArtID = ?");
                 NutzerInput.setInt(1, Integer.parseInt(newValue));
@@ -76,9 +73,9 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
-        }));
+        });
 
         Label LabelF = new Label("Verbrechen");
         TextField LabelFWert = new TextField();
@@ -96,7 +93,7 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }));
 
@@ -302,7 +299,7 @@ public class HauptMenueEventManagment {
         Label LabelE = new Label("PersonenID");
         TextField LabelEWert = new TextField();
 
-        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+        LabelEWert.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM PERSON WHERE PersonenID = ?");
                 NutzerInput.setInt(1, Integer.parseInt(newValue));
@@ -312,9 +309,9 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
-        }));
+        });
 
         Label LabelF = new Label("Verbrechen");
         TextField LabelFWert = new TextField();
@@ -332,7 +329,7 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }));
 
@@ -409,7 +406,7 @@ public class HauptMenueEventManagment {
         Label LabelE = new Label("PersonenID");
         TextField LabelEWert = new TextField();
 
-        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+        LabelEWert.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM PERSON WHERE PersonenID = ?");
                 NutzerInput.setInt(1, Integer.parseInt(newValue));
@@ -419,9 +416,9 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
-        }));
+        });
 
         Label LabelF = new Label("Verbrechen");
         TextField LabelFWert = new TextField();
@@ -439,7 +436,7 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }));
 

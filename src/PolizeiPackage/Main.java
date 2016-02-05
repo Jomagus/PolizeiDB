@@ -62,7 +62,7 @@ public class Main extends Application {
         ArbeitenAnAM = new ArbeitenAnAnsichtManager(DBH, IEM, this);
         LageAM = new LageAnsichtManager(DBH, IEM, this);
 
-        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(PrimaereStage, DBH, IEM, PolizistAM, OpferAM, VerdachtigeAM, VerbrechenAM);
+        HauptMenueEventManagment HauptMenueManager = new HauptMenueEventManagment(DBH, IEM, PolizistAM, OpferAM, VerdachtigeAM, VerbrechenAM);
 
         ArbeitenAnAM.setFallAM(FallAM);
         ArbeitenAnAM.setPolizistAM(PolizistAM);
@@ -263,10 +263,6 @@ public class Main extends Application {
 
     public void setMittlereAnsicht(Node Centeransicht) {
         PrimaeresLayout.setCenter(Centeransicht);
-    }
-
-    public Stage getPrimaereStage() {
-        return PrimaereStage;
     }
 
     /**

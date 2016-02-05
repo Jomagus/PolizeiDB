@@ -18,8 +18,7 @@ public class DatenbankHandler {
         Verbindung = null;
         VerbindeDatenbank();
         if (Verbindung == null) {
-            //TODO Errorbehandlung
-            IEM.setErrorText("Konnte keine Verbindung zur Datenbank herstellen");
+            IEM.setErrorText("Konnte keine Verbindung zur Datenbank herstellen. Starten sie das Programm bitte neu.");
         }
     }
 
@@ -34,7 +33,6 @@ public class DatenbankHandler {
             AnfrageObjekt.setQueryTimeout(SQL_TIMEOUT_TIME);
         } catch (SQLException e) {
             IEM.setErrorText(e.getMessage());
-            System.err.println(e.getMessage()); //TODO ordentliches Errorhandling
             return;
         }
         IEM.setInfoText("Verbindung zur Datenbank hergestellt");
@@ -44,7 +42,6 @@ public class DatenbankHandler {
      * Löscht (!!!) die Datenbank und erstellt eine neue.
      */
     public void RebuildDatabase() {
-        //TODO hier vielleicht disconnecten, bestehnende Datenbankdatei löschen und dann neu Verbinden
         try {
             AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS ARBEITEN;");
             AnfrageObjekt.executeUpdate("DROP TABLE IF EXISTS ARBEITEN_AN;");
@@ -166,7 +163,7 @@ public class DatenbankHandler {
                     "  FOREIGN KEY (FallID) REFERENCES FALL(FallID)  ON UPDATE CASCADE ON DELETE RESTRICT\n" +
                     ");");
         } catch (SQLException e) {
-            IEM.setErrorText(e.getMessage()); //TODO ordentliches Error Handling
+            IEM.setErrorText("Konnte Datenbank nicht korregt löschen. Schließen sie das Programm und löschen sie manuell.", e);
         }
         IEM.setInfoText("Datenbank wurde neu erstellt");
     }
