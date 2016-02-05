@@ -15,7 +15,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import sun.util.locale.provider.SPILocaleProviderAdapter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -183,7 +182,8 @@ public class PersonenAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
             VerAM.SuchePerson(SpaltenDaten.getPersonenID());
         });
-        ButtonPromote.setOnAction(event -> {}); //TODO einen zum Polizisten mach knopf einfuegen
+        ButtonPromote.setOnAction(event -> {
+        }); //TODO einen zum Polizisten mach knopf einfuegen
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 

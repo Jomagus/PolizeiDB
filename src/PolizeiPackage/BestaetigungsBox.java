@@ -17,7 +17,7 @@ public abstract class BestaetigungsBox {
 
     static boolean AntwortWert;
 
-    public static boolean ErstellePopUp(String Fenstertitel ,String Meldungstext) {
+    public static boolean ErstellePopUp(String Fenstertitel, String Meldungstext) {
         Stage Fenster = new Stage();
         Fenster.initModality(Modality.APPLICATION_MODAL);
         Fenster.setTitle(Fenstertitel);

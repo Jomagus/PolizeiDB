@@ -202,6 +202,7 @@ public class DatenbankHandler {
             }
             Verbindung = null;
             AnfrageObjekt = null;
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+        }
     }
 }

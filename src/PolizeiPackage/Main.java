@@ -112,7 +112,7 @@ public class Main extends Application {
         PrimaeresLayout.setBottom(IEM.getFussleiste());
 
         // Setze die Primaere Scene
-        PrimaereScene = new Scene(PrimaeresLayout,1080,720);
+        PrimaereScene = new Scene(PrimaeresLayout, 1080, 720);
 
         // Zeige alles an
         PrimaereStage.setScene(PrimaereScene);
@@ -191,7 +191,7 @@ public class Main extends Application {
     private ScrollPane getLinkeAnsichtenLeiste() {
         // Erzeuge eine Innere VBox
         VBox Inneres = new VBox();
-        Inneres.setPadding(new Insets(10,20,10,10));    // Damit die Scrollleiste nicht ueber die Buttons geht
+        Inneres.setPadding(new Insets(10, 20, 10, 10));    // Damit die Scrollleiste nicht ueber die Buttons geht
         Inneres.setSpacing(8);
         Inneres.alignmentProperty().set(Pos.BASELINE_CENTER);
 

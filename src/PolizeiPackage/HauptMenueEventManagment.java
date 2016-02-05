@@ -76,7 +76,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Label LabelF = new Label("Verbrechen");
@@ -95,7 +96,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Button ButtonFort = new Button("Fortfahren");
@@ -206,7 +208,7 @@ public class HauptMenueEventManagment {
         };
         LabelFWert.setDayCellFactory(TagesZellenFabtrik);
 
-        LabelEWert.getItems().addAll("","m", "w");
+        LabelEWert.getItems().addAll("", "m", "w");
         LabelEWert.setValue("");
 
         Button ButtonFort = new Button("Fortfahren");
@@ -242,7 +244,7 @@ public class HauptMenueEventManagment {
             String PersonenID = LabelAWert.getText().isEmpty() ? "%" : LabelAWert.getText();
             String Name = LabelBWert.getText().isEmpty() ? "%" : LabelBWert.getText();
             String Geburtsdatum = LabelCWert.getValue() == null ? "%" : LabelCWert.getValue().toString();
-            String Nationalitaet  = LabelDWert.getText().isEmpty() ? "%" : LabelDWert.getText();
+            String Nationalitaet = LabelDWert.getText().isEmpty() ? "%" : LabelDWert.getText();
             String Geschlecht = LabelEWert.getValue().toString().isEmpty() ? "%" : LabelEWert.getValue().toString();
             String Dienstgrad = LabelGWert.getText().isEmpty() ? "%" : LabelGWert.getText();
             if (LabelFWert.getValue() != null) {
@@ -310,7 +312,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Label LabelF = new Label("Verbrechen");
@@ -329,7 +332,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Button ButtonFort = new Button("Fortfahren");
@@ -415,7 +419,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Label LabelF = new Label("Verbrechen");
@@ -434,7 +439,8 @@ public class HauptMenueEventManagment {
                 }
             } catch (SQLException e) {
                 IM.setErrorText("Unbekannter SQL Fehler", e);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
         }));
 
         Label LabelI = new Label("Überführt");

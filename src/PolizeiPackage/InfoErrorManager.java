@@ -19,10 +19,8 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
         InfoLabel = new Label();
         InfoLabel.setTextFill(Color.WHITE);
 
-
-        RechtesLabel = new Label("NOCH ÄNDERN!");
+        RechtesLabel = new Label("PolizeiDB v1.0");
         RechtesLabel.setTextFill(Color.WHITE);
-
 
         FussLeiste.getChildren().addAll(InfoLabel, RechtesLabel);
         AnchorPane.setLeftAnchor(InfoLabel, (double) 10);
@@ -62,7 +60,6 @@ public class InfoErrorManager { //TODO evtl diese klasse benutzen um logs zu erz
     public void setErrorText(String InfoText, Exception e) {
         InfoLabel.setTextFill(Color.RED);
         InfoLabel.setText(InfoText);
-        System.err.println(e.getMessage());
     }
 
     /**

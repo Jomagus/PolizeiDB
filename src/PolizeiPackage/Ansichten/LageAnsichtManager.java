@@ -445,7 +445,7 @@ public class LageAnsichtManager {
             AnfrageAntwort = DH.getAnfrageObjekt().executeQuery("SELECT innere_BezirksID, INNEN.Name, äußere_BezirksID, AUSSEN.NAME " +
                     "FROM LIEGT_IN, BEZIRK AS INNEN, BEZIRK AS AUSSEN " +
                     "WHERE AUSSEN.BezirksID = LIEGT_IN.äußere_BezirksID AND INNEN.BezirksID = LIEGT_IN.innere_BezirksID " +
-                    "AND (INNEN.BezirksID = "+ BezirksID +" OR AUSSEN.BezirksID = "+ BezirksID +");");
+                    "AND (INNEN.BezirksID = " + BezirksID + " OR AUSSEN.BezirksID = " + BezirksID + ");");
             while (AnfrageAntwort.next()) {
                 LageDatenListe.add(new LageDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
                         AnfrageAntwort.getInt(3), AnfrageAntwort.getString(4)));
