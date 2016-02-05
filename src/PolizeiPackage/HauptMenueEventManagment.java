@@ -2,6 +2,7 @@ package PolizeiPackage;
 
 import PolizeiPackage.Ansichten.OpferAnsichtManager;
 import PolizeiPackage.Ansichten.PolizistAnsichtManager;
+import PolizeiPackage.Ansichten.VerbrechenAnsichtManager;
 import PolizeiPackage.Ansichten.VerdachtigeAnsichtManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,23 +30,128 @@ public class HauptMenueEventManagment {
     private InfoErrorManager IM;
     private OpferAnsichtManager OpferAM;
     private VerdachtigeAnsichtManager VerdaechtigeAM;
+    private VerbrechenAnsichtManager VerbrechenAM;
 
     /**
      * Initialisiert einen EventManager fuers Hauptmenue
      *
      * @param VaterStage Die Stage mit dem Hauptmenue
      */
-    public HauptMenueEventManagment(Stage VaterStage, DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM, VerdachtigeAnsichtManager VAM) {
+    public HauptMenueEventManagment(Stage VaterStage, DatenbankHandler DBH, InfoErrorManager IEM, PolizistAnsichtManager PAM, OpferAnsichtManager OAM, VerdachtigeAnsichtManager VAM, VerbrechenAnsichtManager VerA) {
         this.PrimaereStage = VaterStage;
         DH = DBH;
         PolizistAM = PAM;
         IM = IEM;
         OpferAM = OAM;
         VerdaechtigeAM = VAM;
+        VerbrechenAM = VerA;
     }
 
     public void FilterSubMenue() {
+        Stage PopUp = new Stage();
+        PopUp.initModality(Modality.APPLICATION_MODAL);
+        PopUp.setTitle("Filtere Verbrechen");
+        PopUp.setAlwaysOnTop(true);
+        PopUp.setResizable(false);
 
+        GridPane Gitter = new GridPane();
+        Gitter.setHgap(10);
+        Gitter.setVgap(10);
+
+        Label LabelTop = new Label("Hier kann man nur nach Verbrechen Filtern,\n da nur so ein Filter gefordert war.\nFreigelassene Felder gelten als Wildcard (%)");
+
+        Label LabelD = new Label("Art");
+        TextField LabelDWert = new TextField();
+
+        Label LabelE = new Label("ArtID");
+        TextField LabelEWert = new TextField();
+
+        LabelEWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM ART WHERE ArtID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelDWert.setText(Antwort.getString(1));
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {}
+        }));
+
+        Label LabelF = new Label("Verbrechen");
+        TextField LabelFWert = new TextField();
+
+        Label LabelG = new Label("VerbrechensID");
+        TextField LabelGWert = new TextField();
+
+        LabelGWert.textProperty().addListener(((observable, oldValue, newValue) -> {
+            try {
+                PreparedStatement NutzerInput = DH.prepareStatement("SELECT Name FROM VERBRECHEN WHERE VerbrechensID = ?");
+                NutzerInput.setInt(1, Integer.parseInt(newValue));
+                ResultSet Antwort = NutzerInput.executeQuery();
+                if (Antwort.next()) {
+                    LabelFWert.setText(Antwort.getString(1));
+                }
+            } catch (SQLException e) {
+                IM.setErrorText("Unbekannter SQL Fehler", e);
+            } catch (NumberFormatException e) {}
+        }));
+
+        Button ButtonFort = new Button("Fortfahren");
+        Button ButtonAbb = new Button("Abbrechen");
+
+        ButtonFort.defaultButtonProperty();
+        ButtonAbb.cancelButtonProperty();
+
+        ButtonFort.setMaxWidth(Double.MAX_VALUE);
+        ButtonAbb.setMaxWidth(Double.MAX_VALUE);
+
+        Gitter.addColumn(0, LabelD, LabelE, LabelF, LabelG);
+        Gitter.addColumn(1, LabelDWert, LabelEWert, LabelFWert, LabelGWert);
+
+        VBox AussenBox = new VBox(10);
+        HBox InnenBox = new HBox();
+
+        AussenBox.setSpacing(10);
+        AussenBox.setPadding(new Insets(10));
+        InnenBox.setSpacing(10);
+
+        AussenBox.setAlignment(Pos.CENTER);
+        InnenBox.setAlignment(Pos.BOTTOM_CENTER);
+
+        AussenBox.getChildren().addAll(LabelTop, Gitter, InnenBox);
+        InnenBox.getChildren().addAll(ButtonFort, ButtonAbb);
+
+        ButtonAbb.setOnAction(event -> PopUp.close());
+        ButtonFort.setOnAction(event -> {
+            String SQLString = "SELECT VerbrechensID, VERBRECHEN.Name, VERBRECHEN.Datum, VERBRECHEN.geschieht_in_BezirksID, VERBRECHEN.gehört_zu_FallID, VERBRECHEN.gehört_zu_ArtID, BEZIRK.Name as BezirkName, FALL.Name as FallName, ART.Name as ArtName " +
+                    "FROM VERBRECHEN, BEZIRK, FALL, ART WHERE VERBRECHEN.gehört_zu_ArtID = ArtID AND VERBRECHEN.gehört_zu_FallID = FALL.FallID AND VERBRECHEN.geschieht_in_BezirksID = BEZIRK.BezirksID " +
+                    "AND Art.Name LIKE ? AND VERBRECHEN.gehört_zu_ArtID LIKE ? AND VERBRECHEN.Name LIKE ? AND VERBRECHEN.VerbrechensID LIKE ?";
+            ResultSet Results = null;
+
+            String ArtName = LabelDWert.getText().isEmpty() ? "%" : LabelDWert.getText();
+            String ArtID = LabelEWert.getText().isEmpty() ? "%" : LabelEWert.getText();
+            String VerbrechenName = LabelFWert.getText().isEmpty() ? "%" : LabelFWert.getText();
+            String VerbrechensID = LabelGWert.getText().isEmpty() ? "%" : LabelGWert.getText();
+
+            try {
+                PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
+                InsertStatement.setString(1, ArtName);
+                InsertStatement.setString(2, ArtID);
+                InsertStatement.setString(3, VerbrechenName);
+                InsertStatement.setString(4, VerbrechensID);
+                Results = InsertStatement.executeQuery();
+                IM.setInfoText("Suchanfrage durchgeführt");
+            } catch (SQLException e) {
+                IM.setErrorText("Suchanfrage Fehlgeschlagen", e);
+            }
+            VerbrechenAM.ZeigeSuchResultate(Results);
+            PopUp.close();
+        });
+
+        PopUp.setScene(new Scene(AussenBox));
+        PopUp.showAndWait();
     }
 
     public void SuchenPolizisten() {

@@ -650,4 +650,20 @@ public class VerbrechenAnsichtManager {
             IM.setErrorText("Unbekannter Fehler beim Queransichtladen", e);
         }
     }
+
+    public void ZeigeSuchResultate(ResultSet R) {
+        Hauptprogramm.setMittlereAnsicht(getVerbrechenAnsicht());
+        VerbrechenDatenListe.clear();
+        ResultSet AnfrageAntwort;
+        try {
+            AnfrageAntwort = R;
+            while (AnfrageAntwort.next()) {
+                VerbrechenDatenListe.add(new VerbrechenDaten(AnfrageAntwort.getInt(1), AnfrageAntwort.getString(2),
+                        AnfrageAntwort.getString(3), AnfrageAntwort.getInt(4), AnfrageAntwort.getInt(5), AnfrageAntwort.getInt(6),
+                        AnfrageAntwort.getString(7), AnfrageAntwort.getString(8), AnfrageAntwort.getString(9)));
+            }
+        } catch (SQLException e) {
+            IM.setErrorText("Unbekannter Fehler bei aktualisieren der Ansicht", e);
+        }
+    }
 }
