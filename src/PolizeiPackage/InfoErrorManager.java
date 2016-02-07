@@ -19,7 +19,7 @@ public class InfoErrorManager {
         InfoLabel = new Label();
         InfoLabel.setTextFill(Color.WHITE);
 
-        RechtesLabel = new Label("PolizeiDB v1.0");
+        RechtesLabel = new Label("PolizeiDB v1.2");
         RechtesLabel.setTextFill(Color.WHITE);
 
         FussLeiste.getChildren().addAll(InfoLabel, RechtesLabel);
