@@ -409,7 +409,7 @@ public class OpferAnsichtManager {
 
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
-            String SQLString = "UPDATE SIND_OPFER SET PersonenID=?, VerbrechensID=? WHERE PersonenID = " + Auswahl.getPersonenID() + "AND VerbrechensID = " + Auswahl.getVerbrechensID();
+            String SQLString = "UPDATE SIND_OPFER SET PersonenID=?, VerbrechensID=? WHERE PersonenID = " + Auswahl.getPersonenID() + " AND VerbrechensID = " + Auswahl.getVerbrechensID();
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setInt(1, Integer.parseInt(LabelEWert.getText()));
@@ -436,7 +436,7 @@ public class OpferAnsichtManager {
 
         Nutzerauswahl.forEach(OpferDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM SIND_OPFER  WHERE PersonenID = " + OpferDaten.getPersonenID() + "AND VerbrechensID = " + OpferDaten.getVerbrechensID());
+                DH.getAnfrageObjekt().executeUpdate("DELETE FROM SIND_OPFER  WHERE PersonenID = " + OpferDaten.getPersonenID() + " AND VerbrechensID = " + OpferDaten.getVerbrechensID());
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

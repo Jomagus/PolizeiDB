@@ -183,7 +183,63 @@ public class PersonenAnsichtManager {
             VerAM.SuchePerson(SpaltenDaten.getPersonenID());
         });
         ButtonPromote.setOnAction(event -> {
-        }); //TODO einen zum Polizisten mach knopf einfuegen
+            Stage PopUp = new Stage();
+            PopUp.initModality(Modality.APPLICATION_MODAL);
+            PopUp.setTitle("Person befördern");
+            PopUp.setAlwaysOnTop(true);
+            PopUp.setResizable(false);
+
+            GridPane Gitter = new GridPane();
+            Gitter.setHgap(10);
+            Gitter.setVgap(10);
+
+            Label LabelRang = new Label("Dienstrang");
+            TextField LabelRangWert = new TextField();
+
+            Button ButtonFort = new Button("Fortfahren");
+            Button ButtonAbb = new Button("Abbrechen");
+
+            ButtonFort.defaultButtonProperty();
+            ButtonAbb.cancelButtonProperty();
+
+            ButtonFort.setMaxWidth(Double.MAX_VALUE);
+            ButtonAbb.setMaxWidth(Double.MAX_VALUE);
+
+            Gitter.addColumn(0, LabelRang);
+            Gitter.addColumn(1, LabelRangWert);
+
+            VBox AussenBox = new VBox(10);
+            HBox InnenBox = new HBox();
+
+            AussenBox.setSpacing(10);
+            AussenBox.setPadding(new Insets(10));
+            InnenBox.setSpacing(10);
+
+            AussenBox.setAlignment(Pos.CENTER);
+            InnenBox.setAlignment(Pos.BOTTOM_CENTER);
+
+            AussenBox.getChildren().addAll(Gitter, InnenBox);
+            InnenBox.getChildren().addAll(ButtonFort, ButtonAbb);
+
+            ButtonAbb.setOnAction(event2 -> PopUp.close());
+            ButtonFort.setOnAction(event2 -> {
+                String SQLString = "INSERT INTO POLIZIST (PersonenID, Dienstgrad) VALUES (?, ?)";
+                try {
+                    PreparedStatement InsertStatement = DH.prepareStatement(SQLString);
+                    InsertStatement.setInt(1, SpaltenDaten.getPersonenID());
+                    InsertStatement.setString(2, LabelRangWert.getText());
+                    InsertStatement.executeUpdate();
+                    IM.setInfoText("Einfügen durchgeführt");
+                } catch (SQLException e) {
+                    IM.setErrorText("Einfügen Fehlgeschlagen", e);
+                }
+                refreshPersonenAnsicht();
+                PopUp.close();
+            });
+
+            PopUp.setScene(new Scene(AussenBox));
+            PopUp.showAndWait();
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -442,8 +498,8 @@ public class PersonenAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (LabelFWert.getValue() == null) {
-                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=? WHERE PersonenID = " + Auswahl.getPersonenID();
+            if (LabelFWert.getEditor().getText().isEmpty()) {
+                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=NULL WHERE PersonenID = " + Auswahl.getPersonenID();
             } else {
                 SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=? WHERE PersonenID = " + Auswahl.getPersonenID();
             }
@@ -453,8 +509,8 @@ public class PersonenAnsichtManager {
                 InsertStatement.setString(2, LabelCWert.getValue().toString()); //TODO exception
                 InsertStatement.setString(3, LabelDWert.getText());
                 InsertStatement.setString(4, LabelEWert.getValue().toString());
-                if (LabelFWert.getValue() != null) {
-                    InsertStatement.setString(5, LabelFWert.getValue().toString()); //TODO exception
+                if (LabelFWert.getValue() != null &&!LabelFWert.getEditor().getText().isEmpty()) {
+                    InsertStatement.setString(5, LabelFWert.getValue().toString());
                 }
                 InsertStatement.executeUpdate();
                 IM.setInfoText("Änderung durchgeführt");

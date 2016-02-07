@@ -94,6 +94,7 @@ public class Main extends Application {
         VerbrechenAM.setArtAM(ArtAM);
         VerbrechenAM.setBezirkAM(BezirkAM);
         VerbrechenAM.setFallAM(FallAM);
+        VerbrechenAM.setOpferAM(OpferAM);
         VerdachtigeAM.setPersonenAM(PersonenAM);
         VerdachtigeAM.setVerbrechenAM(VerbrechenAM);
 

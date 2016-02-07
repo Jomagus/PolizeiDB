@@ -496,8 +496,8 @@ public class PolizistAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (LabelFWert.getValue() == null) {
-                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=? WHERE PersonenID = " + Auswahl.getPersonenID();
+            if (LabelFWert.getEditor().getText().isEmpty()) {
+                SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=NULL WHERE PersonenID = " + Auswahl.getPersonenID();
             } else {
                 SQLString = "UPDATE PERSON SET Name=?, Geburtsdatum=?, Nationalität=?, Geschlecht=?, Todesdatum=? WHERE PersonenID = " + Auswahl.getPersonenID();
             }
@@ -507,8 +507,8 @@ public class PolizistAnsichtManager {
                 InsertStatement.setString(2, LabelCWert.getValue().toString()); //TODO exception
                 InsertStatement.setString(3, LabelDWert.getText());
                 InsertStatement.setString(4, LabelEWert.getValue().toString());
-                if (LabelFWert.getValue() != null) {
-                    InsertStatement.setString(5, LabelFWert.getValue().toString()); //TODO exception
+                if (LabelFWert.getValue() != null && !LabelFWert.getEditor().getText().isEmpty()) {
+                    InsertStatement.setString(5, LabelFWert.getValue().toString());
                 }
                 InsertStatement.executeUpdate();
                 SQLString = "UPDATE POLIZIST SET Dienstgrad = ? WHERE PersonenID = " + Auswahl.getPersonenID();

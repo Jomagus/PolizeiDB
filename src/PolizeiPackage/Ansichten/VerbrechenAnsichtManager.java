@@ -35,6 +35,7 @@ public class VerbrechenAnsichtManager {
     private BezirkAnsichtManager BezirkAM;
     private FallAnsichtManager FallAM;
     private ArtAnsichtManager ArtAM;
+    private OpferAnsichtManager OpferAM;
 
     public VerbrechenAnsichtManager(DatenbankHandler DBH, InfoErrorManager IEM, Main HauptFenster) {
         DH = DBH;
@@ -55,6 +56,10 @@ public class VerbrechenAnsichtManager {
 
     public void setArtAM(ArtAnsichtManager artAM) {
         ArtAM = artAM;
+    }
+
+    public void setOpferAM(OpferAnsichtManager opferAM) {
+        OpferAM = opferAM;
     }
 
     public Node getVerbrechenAnsicht() {
@@ -174,6 +179,7 @@ public class VerbrechenAnsichtManager {
         Button ButtonSucheBezirksId = new Button("Suche nach Bezirk");
         Button ButtonSucheFallId = new Button("Suche nach Fall");
         Button ButtonSucheArtId = new Button("Suche nach Art");
+        Button ButtonSucheOpfer = new Button("Suche nach Opfern");
         Button ButtonClose = new Button("Detailansicht verlassen");
 
         ButtonBearbeiten.setOnAction(event -> {
@@ -200,6 +206,10 @@ public class VerbrechenAnsichtManager {
             Hauptprogramm.setRechteAnsicht(null);
             ArtAM.SucheArt(SpaltenDaten.getArtID());
         });
+        ButtonSucheOpfer.setOnAction(event -> {
+            Hauptprogramm.setRechteAnsicht(null);
+            OpferAM.SucheNachVerbrechen(SpaltenDaten.getVerbrechensID());
+        });
 
         ButtonClose.setOnAction(event -> Hauptprogramm.setRechteAnsicht(null));
 
@@ -210,6 +220,7 @@ public class VerbrechenAnsichtManager {
         ButtonSucheBezirksId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheFallId.setMaxWidth(Double.MAX_VALUE);
         ButtonSucheArtId.setMaxWidth(Double.MAX_VALUE);
+        ButtonSucheOpfer.setMaxWidth(Double.MAX_VALUE);
         ButtonClose.setMaxWidth(Double.MAX_VALUE);
 
         // Wir haben ein Gridpane oben, eine HBox unten in einer VBox in einem ScrollPane
@@ -228,7 +239,7 @@ public class VerbrechenAnsichtManager {
 
         VBox Mittelteil = new VBox(10);
         Mittelteil.setPadding(new Insets(10, 20, 10, 10));
-        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonClose);
+        Mittelteil.getChildren().addAll(Oben, Unten, ButtonSucheBezirksId, ButtonSucheFallId, ButtonSucheArtId, ButtonSucheOpfer, ButtonClose);
 
         ScrollPane Aussen = new ScrollPane();
 

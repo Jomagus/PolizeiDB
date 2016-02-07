@@ -479,8 +479,8 @@ public class ArbeitenAnsichtManager {
             String SQLString = "UPDATE ARBEITEN SET PersonenID=?, BehördenID=?, von=?, bis=?  " +
                     "WHERE PersonenID= " + Auswahl.getPersonenID() +
                     " AND BehördenID= " + Auswahl.getBehordenID() +
-                    " AND von= " + Auswahl.getVonDatum() +
-                    " AND bis =" + Auswahl.getBisDatum();
+                    " AND von= \"" + Auswahl.getVonDatum() +
+                    "\" AND bis = \"" + Auswahl.getBisDatum() + "\";";
             try {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setInt(1, Integer.parseInt(LabelEWert.getText()));
@@ -509,10 +509,11 @@ public class ArbeitenAnsichtManager {
 
         Nutzerauswahl.forEach(ArbeitenDaten -> {
             try {
-                DH.getAnfrageObjekt().executeUpdate("DELETE FROM Arbeiten WHERE PersonenID= " + ArbeitenDaten.getPersonenID() +
+                String SQLString = "DELETE FROM ARBEITEN WHERE PersonenID= " + ArbeitenDaten.getPersonenID() +
                         " AND BehördenID= " + ArbeitenDaten.getBehordenID() +
-                        " AND von= " + ArbeitenDaten.getVonDatum() +
-                        " AND bis =" + ArbeitenDaten.getBisDatum());
+                        " AND von= \"" + ArbeitenDaten.getVonDatum() +
+                        "\" AND bis = \"" + ArbeitenDaten.getBisDatum()+ "\";";
+                DH.getAnfrageObjekt().executeUpdate(SQLString);
             } catch (SQLException e) {
                 IM.setErrorText("Löschen fehlgeschlagen", e);
             }

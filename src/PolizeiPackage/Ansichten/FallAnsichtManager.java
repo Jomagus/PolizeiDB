@@ -418,8 +418,8 @@ public class FallAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (TextFeldB.getValue() == null) {
-                SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=? WHERE FallID = " + Auswahl.getFallID();
+            if (TextFeldB.getEditor().getText().isEmpty()) {
+                SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=NULL WHERE FallID = " + Auswahl.getFallID();
             } else {
                 SQLString = "UPDATE FALL SET Name=?, Eröffnungsdatum=?, Enddatum=? WHERE FallID = " + Auswahl.getFallID();
             }
@@ -427,7 +427,7 @@ public class FallAnsichtManager {
                 PreparedStatement SQLInjektionNeinNein = DH.prepareStatement(SQLString);
                 SQLInjektionNeinNein.setString(1, TextFeldName.getText());
                 SQLInjektionNeinNein.setString(2, TextFeldA.getValue().toString());
-                if (TextFeldB.getValue() != null) {
+                if (TextFeldB.getValue() != null && !TextFeldB.getEditor().getText().isEmpty()) {
                     SQLInjektionNeinNein.setString(3, TextFeldB.getValue().toString());
                 }
                 SQLInjektionNeinNein.executeUpdate();

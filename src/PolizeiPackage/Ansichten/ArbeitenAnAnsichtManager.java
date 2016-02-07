@@ -489,8 +489,8 @@ public class ArbeitenAnAnsichtManager {
         ButtonAbb.setOnAction(event -> PopUp.close());
         ButtonFort.setOnAction(event -> {
             String SQLString;
-            if (LabelIWert.getValue() == null) {
-                SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?" +
+            if (LabelIWert.getEditor().getText().isEmpty()) {
+                SQLString = "UPDATE ARBEITEN_AN SET PersonenID=?, FallID=?, von=?, bis=NULL " +
                         "WHERE PersonenID= " + Auswahl.getPersonenID() +
                         " AND FallID= " + Auswahl.getFallID();
             } else {
@@ -503,7 +503,7 @@ public class ArbeitenAnAnsichtManager {
                 SQLInjektionNeinNein.setInt(1, Integer.parseInt(LabelEWert.getText()));
                 SQLInjektionNeinNein.setInt(2, Integer.parseInt(LabelGWert.getText()));
                 SQLInjektionNeinNein.setString(3, LabelHWert.getValue().toString());
-                if (LabelIWert.getValue() != null) {
+                if (LabelIWert.getValue() != null && !LabelIWert.getEditor().getText().isEmpty()) {
                     SQLInjektionNeinNein.setString(4, LabelIWert.getValue().toString());
                 }
                 SQLInjektionNeinNein.executeUpdate();
